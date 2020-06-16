@@ -710,15 +710,6 @@ document.addEventListener("turbolinks:load", function(){
   };
 
   /* Uploading Org Structure */
-  $('.edit-org').on('click',function(e){
-    e.preventDefault();
-    var id = this.id.substring(7);
-    $('#editOrgModal').modal('show');
-    $('#hiddenOrgMetadata').val(id);
-    var text = $(this).parent().children('span').text();
-    $('#orgEditName').val(text);
-    return false;
-  });
   /*$('#generateFromUsers').validator().on('submit', function(e){
     $.ajax({
       url: url,
@@ -738,7 +729,32 @@ document.addEventListener("turbolinks:load", function(){
 
 
   /* Edit Org */
+  $('.edit-org').on('click',function(e){
+    e.preventDefault();
+    var id = this.id.substring(7);
+    $('#editOrgModal').modal('show');
+    $('#hiddenOrgMetadata').val(id);
+    var text = $(this).parent().children('span').text();
+    $('#orgEditName').val(text);
+    return false;
+  });
+  $('#editOrgForm').on('submit', function(){
+    $.ajax({
+      url: '/admin/org_chart/edit',
+      type: 'PATCH',
+      data: new FormData($('#editOrgForm')[0]),
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response) {
 
+      },
+      error: function(response) {
+        bootbox.alert(response.responseText);
+      }
+    });
+    return false;
+  });
 
 });
 

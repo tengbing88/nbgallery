@@ -3079,6 +3079,13 @@ body.page-admin-org_chart {
         visibility: visible;
     }
 }
+.org-list-container {
+    border: 1px solid #eee;
+    padding: 1em 0 .5em;
+    &.enlarge {
+        font-size: 120%;
+    }
+}
 .indent-1 {
     margin-left: 1em;
 }

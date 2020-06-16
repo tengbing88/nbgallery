@@ -40,7 +40,43 @@ class OrgsController < ApplicationController
 
   # PATCH /admin/org_chart/edit
   def edit
-    flash[:success] = "Org was modified successfully."
-    redirect_to(:back)
+    error = ""
+    if params[:id].present?
+      id = params[:id].to_i
+    else
+      error += "Failed to forward to server what org was recieving these edits. "
+    end
+    if params[:name].present? || params[:name].strip == ""
+      name = params[:name]
+    else
+      error += "Name of org cannot be empty. "
+    end
+    if params[:parent].present?
+      parent = params[:parent].to_i
+    else
+      error += "Parent element can't be nothing. How did you even do this? "
+    end
+    if error == "" && id == parent
+      error += "Org can't be it's own parent. "
+    end
+    if error == ""
+      orgs = Org.where(name: name).pluck(id)
+      if orgs.length > 1
+        error += "Problem with database. Two or more orgs exist with this same name already. "
+      elsif orgs.length == 1 && orgs[0] != id
+        error += "Can't have two orgs with the same name #{orgs[0]} cannot equal #{id}. "
+      end
+    end
+    if error == ""
+      org = Org.find(id)
+      org.name = name
+      org.parent_id = parent
+      org.save!
+      flash[:success] = "Org was modified successfully."
+      redirect_to(:back)
+    else
+      flash[:error] = error;
+      redirect_to(:back)
+    end
   end
 end

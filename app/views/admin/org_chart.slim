@@ -7,12 +7,14 @@ div.content-container
       form method="post" action="/admin/org_chart/generate_orgs_from_profiles" id="generateFromUsers"
         button.btn.btn-primary type="submit" Generate from User Profiles
       button.btn.btn-primary id="generateFromFile" Upload from File
+      span.error
+        |  Not working yet
       -#   Open modal to accept text file with tab separated orgs
       -#   Instruction on what it should look like on Modal
       -#   button.btn.btn-success Upload
       -#      Ajax to method that reads the text file line by line and creates a bunch of database additions with the proper hierarchy structure (this is what we will use to keep continuity between Dev -> Prod). Throw error if text file is blank or if in wrong format.
   -else
-    div.org-list-container
+    div.org-list-container class=(orgs.length < 30? "enlarge" : "")
       -# REPLACE WITH RECURSIVE CALL TO GO INFINITE LEVELS DEEP populateOrgs(parent_id_to_populate_for, level_deep)
       ul
         li
@@ -24,12 +26,20 @@ div.content-container
             a.edit-icon.edit-org.modal-activate id="editOrg#{org.id}" href="#"
               span.glyphicon.glyphicon-pencil.tooltips aria-hidden="true" title="Edit org"
               span.sr-only Edit org
-
+  form
+    div.checkbox
+      label
+        input name="default" type="checkbox" value="true"
+          p
+            ' Disable non-admin users from changing their org/department
+            span.error Not working yet
     -#   Add the "All" or "All Departments" as first element
     -#   Grab all elements from org_performance_database where parent_org_id of 1 (which is "All")
     -#   Sort those elements of alphabetically.
     -#   Do a recursive loop that goes through all, finds all children and then prints in a bulleted list format adding an indent (in the form of a css-selector "indent-1", "indent-2", etc) to each. Will CSS will add increasing margins for each index.
     button.btn.btn-primary Add Org
+    span.error
+      |  Not working yet
     -#   Open modal to Add New Org
     -#   2 fields: name (first letter auto-capitalized but database stored as all lowers), and what it is a parent child of (default being "All" or "All Departments")
     -#   if submit and parent child entry is not valid, throw error within modal
