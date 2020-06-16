@@ -1,0 +1,37 @@
+div.content-container
+  h1.center Org Chart
+  br
+  -orgs = Org.all
+  -if orgs == NIL
+    div.center.button-container
+      form method="post" action="/admin/org_chart/generate_orgs_from_profiles" id="generateFromUsers"
+        button.btn.btn-primary type="submit" Generate from User Profiles
+      button.btn.btn-primary id="generateFromFile" Upload from File
+      -#   Open modal to accept text file with tab separated orgs
+      -#   Instruction on what it should look like on Modal
+      -#   button.btn.btn-success Upload
+      -#      Ajax to method that reads the text file line by line and creates a bunch of database additions with the proper hierarchy structure (this is what we will use to keep continuity between Dev -> Prod). Throw error if text file is blank or if in wrong format.
+  -else
+    div.org-list-container
+      -# REPLACE WITH RECURSIVE CALL TO GO INFINITE LEVELS DEEP populateOrgs(parent_id_to_populate_for, level_deep)
+      ul
+        li
+          span ==orgs[0].name
+        -orgs_top = orgs.where(parent_id: 1)
+        -orgs_top.each do |org|
+          li.indent-1
+            span ==org.name
+            a.edit-icon.edit-org.modal-activate id="editOrg#{org.id}" href="#"
+              span.glyphicon.glyphicon-pencil.tooltips aria-hidden="true" title="Edit org"
+              span.sr-only Edit org
+
+    -#   Add the "All" or "All Departments" as first element
+    -#   Grab all elements from org_performance_database where parent_org_id of 1 (which is "All")
+    -#   Sort those elements of alphabetically.
+    -#   Do a recursive loop that goes through all, finds all children and then prints in a bulleted list format adding an indent (in the form of a css-selector "indent-1", "indent-2", etc) to each. Will CSS will add increasing margins for each index.
+    button.btn.btn-primary Add Org
+    -#   Open modal to Add New Org
+    -#   2 fields: name (first letter auto-capitalized but database stored as all lowers), and what it is a parent child of (default being "All" or "All Departments")
+    -#   if submit and parent child entry is not valid, throw error within modal
+    -#   button.btn.btn-success Add Org
+    -#       Ajax to method to update org_performance_database.

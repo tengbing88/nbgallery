@@ -163,8 +163,20 @@ Rails.application.routes.draw do # rubocop: disable Metrics/BlockLength
     get 'notebooks'
     get 'packages'
     get 'exception'
+    get 'org_chart'
   end
   get 'admin' => 'admin#index'
+
+  resources :org_chart, only: %i[index], path: 'admin/org_chart' do
+    collection do
+      patch 'add' => 'orgs#add', path: 'add_org'
+      post 'generate_from_profiles' => 'orgs#generate_from_profiles', path: 'generate_orgs_from_profiles'
+      post 'generate_from_file' => 'orgs#generate_from_file', path: 'generate_orgs_from_file'
+      patch 'edit' => 'orgs#edit', path: 'edit'
+    end
+  end
+
+  resource :orgs, only: %i[show create destroy], path: '/admin/warning'
 
   # Other pages
   root 'static_pages#home'

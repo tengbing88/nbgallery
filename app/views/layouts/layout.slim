@@ -265,10 +265,12 @@ html lang="en"
             ==render partial: "modals/notebook_actions"
             -if url_check[3] != nil && url_check[3] == "metrics"
               ==render partial: "modals/notebook_metric_details"
-          -elsif url_check[1] == "change_requests"  && url_check[2] != nil && url_check[2][0..3] =~ /\d/
+          -elsif url_check[1] == "change_requests" && url_check[2] != nil && url_check[2][0..3] =~ /\d/
             ==render partial: "modals/approve_change_request"
             ==render partial: "modals/decline_change_request"
             ==render partial: "modals/cancel_change_request"
+          -elsif url_check[1] == "admin" && url_check[2] == "org_chart"
+            ==render partial: "modals/edit_org"
           -Dir["app/views/modals/custom/*"].each do |file|
             ==render :file => Rails.root.join(file).to_s
 

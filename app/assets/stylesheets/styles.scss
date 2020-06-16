@@ -3060,6 +3060,45 @@ body.page-user_preferences {
     margin: 15px 1%;
 }
 
+/* === Org Chart === */
+body.page-admin-org_chart .button-container {
+    form {
+        display: inline-block;
+    }
+    button:last-child {
+        margin-left: .25em;
+    }
+}
+body.page-admin-org_chart {
+    a.edit-icon {
+        display: inline-block;
+        margin: -.2em 0 .2em .2em;
+        visibility: hidden;
+    }
+    .org-list-container li:hover a.edit-icon {
+        visibility: visible;
+    }
+}
+.indent-1 {
+    margin-left: 1em;
+}
+.indent-2 {
+    margin-left: 2em;
+}
+.indent-3 {
+    margin-left: 3em;
+}
+.indent-4 {
+    margin-left: 4em;
+}
+.indent-5 {
+    margin-left: 5em;
+}
+.indent-6 {
+    margin-left: 6em;
+}
+
+
 /* ===== UNSUPPORTED BROWSERS ===== */
 body.browser-modern-false {
     &.page-home .navbar-wrapper {

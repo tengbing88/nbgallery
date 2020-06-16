@@ -701,13 +701,44 @@ document.addEventListener("turbolinks:load", function(){
     }
   });
 
-  // Catch people uploading a notebook from the Jupyter client
+  /* Catch people uploading a notebook from the Jupyter client */
   var target = document.location.hash.replace('#','');
   if (target.length){
     if(target=='STAGE'){
       $('#stageUpload').modal('show');
     };
   };
+
+  /* Uploading Org Structure */
+  $('.edit-org').on('click',function(e){
+    e.preventDefault();
+    var id = this.id.substring(7);
+    $('#editOrgModal').modal('show');
+    $('#hiddenOrgMetadata').val(id);
+    var text = $(this).parent().children('span').text();
+    $('#orgEditName').val(text);
+    return false;
+  });
+  /*$('#generateFromUsers').validator().on('submit', function(e){
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: new FormData($('#uploadFileForm')[0]),
+      success: function(response) {
+
+      },
+      error: function(response) {
+        $(document).trigger("upload_error", response);
+      }
+    });
+    return false;
+  });*/
+
+  /* Adding new Org */
+
+
+  /* Edit Org */
+
 
 });
 
