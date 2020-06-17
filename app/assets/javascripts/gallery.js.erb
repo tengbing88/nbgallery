@@ -726,16 +726,39 @@ document.addEventListener("turbolinks:load", function(){
   });*/
 
   /* Adding new Org */
-
+  $('#addOrg').on('click',function(e){
+    e.preventDefault();
+    var id = this.id.substring(7);
+    $('#addOrgModal').modal('show');
+    return false;
+  });
+  $('#addOrgForm').on('submit', function(){
+    $.ajax({
+      url: '/admin/org_chart/add',
+      type: 'PATCH',
+      data: new FormData($('#addOrgForm')[0]),
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+      },
+      error: function(response) {
+        bootbox.alert(response.responseText);
+      }
+    });
+    return false;
+  });
 
   /* Edit Org */
   $('.edit-org').on('click',function(e){
     e.preventDefault();
     var id = this.id.substring(7);
+    var parent_id = $(this).attr('data-parentId');
     $('#editOrgModal').modal('show');
     $('#hiddenOrgMetadata').val(id);
     var text = $(this).parent().children('span').text();
     $('#orgEditName').val(text);
+    $('#orgEditParentField').val(parent_id).select = 'selected';
     return false;
   });
   $('#editOrgForm').on('submit', function(){
@@ -747,7 +770,6 @@ document.addEventListener("turbolinks:load", function(){
       contentType: false,
       processData: false,
       success: function(response) {
-
       },
       error: function(response) {
         bootbox.alert(response.responseText);

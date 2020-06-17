@@ -3086,25 +3086,24 @@ body.page-admin-org_chart {
         font-size: 120%;
     }
 }
-.indent-1 {
-    margin-left: 1em;
+.indent-1 {margin-left: 1em}
+.indent-2 {margin-left: 2em}
+.indent-3 {margin-left: 3em}
+.indent-4 {margin-left: 4em}
+.indent-5 {margin-left: 5em}
+.indent-6 {margin-left: 6em}
+.indent-7 {margin-left: 7em}
+.indent-8 {margin-left: 8em}
+@media all and (min-width: 800px) {
+    .indent-1 {margin-left: 2em}
+    .indent-2 {margin-left: 4em}
+    .indent-3 {margin-left: 6em}
+    .indent-4 {margin-left: 8em}
+    .indent-5 {margin-left: 10em}
+    .indent-6 {margin-left: 12em}
+    .indent-7 {margin-left: 14em}
+    .indent-8 {margin-left: 16em}
 }
-.indent-2 {
-    margin-left: 2em;
-}
-.indent-3 {
-    margin-left: 3em;
-}
-.indent-4 {
-    margin-left: 4em;
-}
-.indent-5 {
-    margin-left: 5em;
-}
-.indent-6 {
-    margin-left: 6em;
-}
-
 
 /* ===== UNSUPPORTED BROWSERS ===== */
 body.browser-modern-false {

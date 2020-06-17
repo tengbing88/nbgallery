@@ -8,9 +8,35 @@ class OrgsController < ApplicationController
   end
 
   # PATCH /admin/org_chart/add
-  def add_org
-    flash[:success] = "Org added to org chart successfully."
-    redirect_to(:back)
+  def add
+    error = ""
+    if params[:name].present? || params[:name].strip == ""
+      name = params[:name].strip
+    else
+      error += "Name of org cannot be empty. "
+    end
+    if params[:parent].present?
+      parent = params[:parent].to_i
+    else
+      error += "Parent element can't be nothing. How did you even do this? "
+    end
+    if error == ""
+      orgs = Org.where(name: name).pluck(:id)
+      if orgs.length > 1
+        error += "Problem with database. Two or more orgs exist with this same name already. "
+      elsif orgs.length == 1
+        error += "Can't have two orgs with the same name. Please choose a different name. "
+      end
+    end
+    if error == ""
+      org = Org.create(name: name, parent_id: parent)
+      org.save!
+      flash[:success] = "Org added to org chart successfully."
+      redirect_to(:back)
+    else
+      flash[:error] = error;
+      redirect_to(:back)
+    end
   end
 
   # POST /admin/org_chart/generate_orgs_from_profiles
@@ -47,7 +73,7 @@ class OrgsController < ApplicationController
       error += "Failed to forward to server what org was recieving these edits. "
     end
     if params[:name].present? || params[:name].strip == ""
-      name = params[:name]
+      name = params[:name].strip
     else
       error += "Name of org cannot be empty. "
     end
@@ -60,11 +86,11 @@ class OrgsController < ApplicationController
       error += "Org can't be it's own parent. "
     end
     if error == ""
-      orgs = Org.where(name: name).pluck(id)
+      orgs = Org.where(name: name).pluck(:id)
       if orgs.length > 1
         error += "Problem with database. Two or more orgs exist with this same name already. "
       elsif orgs.length == 1 && orgs[0] != id
-        error += "Can't have two orgs with the same name #{orgs[0]} cannot equal #{id}. "
+        error += "Can't have two orgs with the same name. Please choose a different name. "
       end
     end
     if error == ""
@@ -79,4 +105,18 @@ class OrgsController < ApplicationController
       redirect_to(:back)
     end
   end
+
+
+  # POST /admin/org_chart/delete
+  def delete
+    flash[:success] = "Org deleted from org chart successful."
+    redirect_to(:back)
+  end
+
+  # POST /admin/org_chart/delete_all
+  def delete_all
+    flash[:success] = "Entire org chart deleted successfully."
+    redirect_to(:back)
+  end
+
 end

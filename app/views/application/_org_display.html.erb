@@ -1,0 +1,28 @@
+<% def populateOrgs(parent_id, level_deep) %>
+  <% orgs = Org.where(parent_id: parent_id) %>
+  <% orgs.each do |org| %>
+    <li class="indent-<%=level_deep%>">
+      <span> <%=org.name%> </span>
+      <a class="edit-icon edit-org modal-activate" id="editOrg<%=org.id%>" data-parentId="<%=org.parent_id%>" href="#">
+        <span class="glyphicon glyphicon-pencil tooltips" aria-hidden="true" title="Edit org"></span>
+        <span class="sr-only"> Edit org </span>
+      </a>
+      <% if Org.where(parent_id: org.id).length > 0 %>
+        <% populateOrgs(org.id, (level_deep + 1)) %>
+      <% end %>
+    </li>
+  <% end %>
+<% end %>
+
+<% entries = Org.all.length %>
+<div class="org-list-container <%=entries < 30? " enlarge" : ""%>">
+  <ul>
+    <li>
+      <% super_org = Org.first %>
+      <span><%=super_org.name%></span>
+      <% if Org.where(parent_id: super_org.id).length > 0 %>
+        <% populateOrgs(super_org.id,1) %>
+      <% end %>
+    </li>
+  </ul>
+</div>

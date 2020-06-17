@@ -169,10 +169,12 @@ Rails.application.routes.draw do # rubocop: disable Metrics/BlockLength
 
   resources :org_chart, only: %i[index], path: 'admin/org_chart' do
     collection do
-      patch 'add' => 'orgs#add', path: 'add_org'
+      patch 'add' => 'orgs#add', path: 'add'
       post 'generate_from_profiles' => 'orgs#generate_from_profiles', path: 'generate_orgs_from_profiles'
       post 'generate_from_file' => 'orgs#generate_from_file', path: 'generate_orgs_from_file'
       patch 'edit' => 'orgs#edit', path: 'edit'
+      post 'delete' => 'orgs#delete', path: 'delete'
+      post 'delete_all' => 'orgs#delete_all', path: 'delete_all'
     end
   end
 

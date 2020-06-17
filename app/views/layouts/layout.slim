@@ -270,6 +270,7 @@ html lang="en"
             ==render partial: "modals/decline_change_request"
             ==render partial: "modals/cancel_change_request"
           -elsif url_check[1] == "admin" && url_check[2] == "org_chart"
+            ==render partial: "modals/add_org"
             ==render partial: "modals/edit_org"
           -Dir["app/views/modals/custom/*"].each do |file|
             ==render :file => Rails.root.join(file).to_s

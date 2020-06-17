@@ -14,18 +14,7 @@ div.content-container
       -#   button.btn.btn-success Upload
       -#      Ajax to method that reads the text file line by line and creates a bunch of database additions with the proper hierarchy structure (this is what we will use to keep continuity between Dev -> Prod). Throw error if text file is blank or if in wrong format.
   -else
-    div.org-list-container class=(orgs.length < 30? "enlarge" : "")
-      -# REPLACE WITH RECURSIVE CALL TO GO INFINITE LEVELS DEEP populateOrgs(parent_id_to_populate_for, level_deep)
-      ul
-        li
-          span ==orgs[0].name
-        -orgs_top = orgs.where(parent_id: 1)
-        -orgs_top.each do |org|
-          li.indent-1
-            span ==org.name
-            a.edit-icon.edit-org.modal-activate id="editOrg#{org.id}" href="#"
-              span.glyphicon.glyphicon-pencil.tooltips aria-hidden="true" title="Edit org"
-              span.sr-only Edit org
+    ==render partial: "org_display"
   form
     div.checkbox
       label
@@ -37,9 +26,7 @@ div.content-container
     -#   Grab all elements from org_performance_database where parent_org_id of 1 (which is "All")
     -#   Sort those elements of alphabetically.
     -#   Do a recursive loop that goes through all, finds all children and then prints in a bulleted list format adding an indent (in the form of a css-selector "indent-1", "indent-2", etc) to each. Will CSS will add increasing margins for each index.
-    button.btn.btn-primary Add Org
-    span.error
-      |  Not working yet
+    button.btn.btn-primary id="addOrg" Add Org
     -#   Open modal to Add New Org
     -#   2 fields: name (first letter auto-capitalized but database stored as all lowers), and what it is a parent child of (default being "All" or "All Departments")
     -#   if submit and parent child entry is not valid, throw error within modal

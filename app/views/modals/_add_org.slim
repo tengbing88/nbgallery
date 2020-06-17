@@ -1,0 +1,27 @@
+div.modal.fade.notebookModalsSmall id="addOrgModal" aria-modal="true" aria-labelledby="addOrgHeader" aria-describedby="addOrgDescription" role="dialog" style="display: none" tabindex="0"
+  div.modal-content
+    div.modal-header
+      h1.modal-title id="addOrgHeader" Add Organization
+      p.sr-only id="addOrgDescription" Dialog for editing name and parent department of a given organization
+      button.close type="button" data-dismiss="modal"
+        span aria-hidden="true" &times;
+        span.sr-only Close Dialog
+    div.modal-body
+      form id="addOrgForm" enctype="multipart/form-data" data-toggle="validator" role="form"
+        div.form-group.has-feedback
+          div.input-group
+            span.input-group-addon.upload-addon Name
+            input.form-control id="orgAddName" type="text" name="name" value="" required=true
+          br
+          div.input-group
+            span.input-group-addon.upload-addon Parent
+            select.form-control id="orgAddParentField" name="parent" required=true
+              -orgs = Org.pluck(:id, :name)
+              -orgs.each do |org|
+                option value="#{org[0]}" #{org[1]}
+          div.help-block.with-errors
+          span.glyphicon.form-control-feedback aria-hidden="true"
+        div.modal-footer
+          div
+            button.btn.btn-danger type="button" data-dismiss="modal" Cancel
+            button.btn.btn-success type="submit" id="addOrgSubmit" Create
