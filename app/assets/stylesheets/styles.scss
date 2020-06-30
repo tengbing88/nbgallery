@@ -3065,17 +3065,21 @@ body.page-admin-org_chart .button-container {
     form {
         display: inline-block;
     }
-    button:last-child {
+    button {
         margin-left: .25em;
     }
 }
 body.page-admin-org_chart {
     a.edit-icon {
-        display: inline-block;
         margin: -.2em 0 .2em .2em;
+    }
+    a.edit-icon,
+    a.delete-icon {
+        display: inline-block;
         visibility: hidden;
     }
-    .org-list-container li:hover a.edit-icon {
+    .org-list-container li:hover a.edit-icon,
+    .org-list-container li:hover a.delete-icon {
         visibility: visible;
     }
 }
@@ -3103,6 +3107,9 @@ body.page-admin-org_chart {
     .indent-6 {margin-left: 12em}
     .indent-7 {margin-left: 14em}
     .indent-8 {margin-left: 16em}
+}
+#deleteOrgChart {
+    margin-left: .25em;
 }
 
 /* ===== UNSUPPORTED BROWSERS ===== */

@@ -174,7 +174,6 @@ Rails.application.routes.draw do # rubocop: disable Metrics/BlockLength
       post 'generate_from_file' => 'orgs#generate_from_file', path: 'generate_orgs_from_file'
       patch 'edit' => 'orgs#edit', path: 'edit'
       post 'delete' => 'orgs#delete', path: 'delete'
-      post 'delete_all' => 'orgs#delete_all', path: 'delete_all'
     end
   end
 

@@ -5,7 +5,11 @@
       <span> <%=org.name%> </span>
       <a class="edit-icon edit-org modal-activate" id="editOrg<%=org.id%>" data-parentId="<%=org.parent_id%>" href="#">
         <span class="glyphicon glyphicon-pencil tooltips" aria-hidden="true" title="Edit org"></span>
-        <span class="sr-only"> Edit org </span>
+        <span class="sr-only">Edit org</span>
+      </a>
+      <a class="delete-icon delete-org modal-activate" data-id="<%=org.id%>" href="#">
+        <span class="glyphicon glyphicon-trash tooltips tooltipstered" aria-hidden="true" title="Delete org"></span>
+        <span class="sr-only">Delete</span>
       </a>
       <% if Org.where(parent_id: org.id).length > 0 %>
         <% populateOrgs(org.id, (level_deep + 1)) %>
@@ -15,14 +19,16 @@
 <% end %>
 
 <% entries = Org.all.length %>
-<div class="org-list-container <%=entries < 30? " enlarge" : ""%>">
-  <ul>
-    <li>
-      <% super_org = Org.first %>
-      <span><%=super_org.name%></span>
-      <% if Org.where(parent_id: super_org.id).length > 0 %>
-        <% populateOrgs(super_org.id,1) %>
-      <% end %>
-    </li>
-  </ul>
-</div>
+<% if entries > 0 %>
+  <div class="org-list-container <%=entries < 30? "enlarge" : ""%>">
+    <ul>
+      <li>
+        <% super_org = Org.first %>
+        <span><%=super_org.name%></span>
+        <% if Org.where(parent_id: super_org.id).length > 0 %>
+          <% populateOrgs(super_org.id,1) %>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+<% end %>

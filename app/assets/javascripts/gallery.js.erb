@@ -778,6 +778,43 @@ document.addEventListener("turbolinks:load", function(){
     return false;
   });
 
+  /* Delete Org */
+  $('.delete-org').on('click',function(e){
+    e.preventDefault();
+    var id = $(this).attr('data-id');
+    $('#confirmationModal').modal('show');
+    $('#hiddenConfirmationMetadata').val(id);
+    var text = "Delete organization: \"" + $(this).parent().children('span').text().trim() + "\"";
+    $('#confirmation1').text(text);
+    $('#confirmation2').text("Any and all children of this org will be shifted up one level.").parent().removeClass("hide")
+    return false;
+  });
+  $('#deleteOrgChart').on('click',function(e){
+    e.preventDefault();
+    var id = "0";
+    $('#confirmationModal').modal('show');
+    $('#hiddenConfirmationMetadata').val(id);
+    var text = "Delete all organizations. You cannot undo this.";
+    $('#confirmation1').text(text);
+    return false;
+  });
+  $('body.page-admin-org_chart #confirmationModalForm').on('submit', function(){
+    $.ajax({
+      url: '/admin/org_chart/delete',
+      type: 'POST',
+      data: new FormData($('#confirmationModalForm')[0]),
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+      },
+      error: function(response) {
+        bootbox.alert(response.responseText);
+      }
+    });
+    return false;
+  });
+
 });
 
 document.addEventListener("turbolinks:before-cache", function(){

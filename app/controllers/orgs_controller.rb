@@ -41,9 +41,9 @@ class OrgsController < ApplicationController
 
   # POST /admin/org_chart/generate_orgs_from_profiles
   def generate_from_profiles
-    if @orgs == nil
-      orgs = User.where.not(org: nil).and(User.where(org: "")).uniq.pluck(:org).sort
+    if Org.count == 0
       Org.create(name: "All")
+      orgs = User.where("org != ? AND org != ?", nil, "").uniq.pluck(:org).sort
       if (orgs.length < 1)
         flash[:success] = "Your users don't seem to have any orgs assigned to them. Generated org chart successful."
       elsif (orgs.length >= 1)
@@ -106,17 +106,37 @@ class OrgsController < ApplicationController
     end
   end
 
-
   # POST /admin/org_chart/delete
   def delete
-    flash[:success] = "Org deleted from org chart successful."
-    redirect_to(:back)
-  end
-
-  # POST /admin/org_chart/delete_all
-  def delete_all
-    flash[:success] = "Entire org chart deleted successfully."
-    redirect_to(:back)
+    error = ""
+    if params[:id].present?
+      id = params[:id].to_i
+    else
+      error += "Failed to forward to server what org was intended for deletion. "
+    end
+    if error == "" && id != 0
+      if Org.exists?(id)
+        parent = Org.find(id).parent_id
+        displaced_orgs = Org.where(parent_id: id)
+        displaced_orgs.each do |org|
+          org.parent_id = parent
+          org.save
+        end
+        Org.delete(id)
+        flash[:success] = "Org deleted from org chart successful."
+      else
+        flash[:warning] = "Org has already been deleted from org chart."
+      end
+    else
+      Org.delete_all
+      flash[:success] = "Entire org chart and orgs deleted successful."
+    end
+    if error == ""
+      redirect_to(:back)
+    else
+      flash[:error] = error;
+      redirect_to(:back)
+    end
   end
 
 end

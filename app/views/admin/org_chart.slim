@@ -1,8 +1,7 @@
 div.content-container
   h1.center Org Chart
   br
-  -orgs = Org.all
-  -if orgs == NIL
+  -if Org.count == 0
     div.center.button-container
       form method="post" action="/admin/org_chart/generate_orgs_from_profiles" id="generateFromUsers"
         button.btn.btn-primary type="submit" Generate from User Profiles
@@ -18,15 +17,20 @@ div.content-container
   form
     div.checkbox
       label
-        input name="default" type="checkbox" value="true"
+        input name="disableOrgChanging" type="checkbox" value="true"
           p
             ' Disable non-admin users from changing their org/department
+            span.error Not working yet
+        input name="enableDropdownOrgs" type="checkbox" value="true"
+          p
+            ' Change org/department field for users to a dropdown of only orgs listed in the org chart
             span.error Not working yet
     -#   Add the "All" or "All Departments" as first element
     -#   Grab all elements from org_performance_database where parent_org_id of 1 (which is "All")
     -#   Sort those elements of alphabetically.
     -#   Do a recursive loop that goes through all, finds all children and then prints in a bulleted list format adding an indent (in the form of a css-selector "indent-1", "indent-2", etc) to each. Will CSS will add increasing margins for each index.
-    button.btn.btn-primary id="addOrg" Add Org
+    button.btn.btn-primary.modal-activate id="addOrg" Add Org
+    button.btn.btn-danger.modal-activate id="deleteOrgChart" Delete All Orgs
     -#   Open modal to Add New Org
     -#   2 fields: name (first letter auto-capitalized but database stored as all lowers), and what it is a parent child of (default being "All" or "All Departments")
     -#   if submit and parent child entry is not valid, throw error within modal
