@@ -43,7 +43,8 @@ class OrgsController < ApplicationController
   def generate_from_profiles
     if Org.count == 0
       Org.create(name: "All")
-      orgs = User.where("org != ? AND org != ?", nil, "").uniq.pluck(:org).sort
+      # orgs = User.where("org != ? AND org != ?", nil, "").uniq.pluck(:org).sort
+      orgs = User.where("org != \"\"").uniq.pluck(:org).sort
       if (orgs.length < 1)
         flash[:success] = "Your users don't seem to have any orgs assigned to them. Generated org chart successful."
       elsif (orgs.length >= 1)
