@@ -18,7 +18,7 @@ class SubscriptionsController < ApplicationController
     if Subscription.where({user_id: @user.id, sub_type: subtype, sub_id: subid}).length < 1
       if subtype == "group" || subtype == "notebook" || subtype == "user" || subtype == "tag"
         Subscription.create(user_id: @user.id, sub_type: subtype, sub_id: subid)
-        flash[:success] = "Successfully added #{subtype} subscription!"
+        flash[:success] = "Successfully added #{subtype} subscription."
       else
         flash[:error] = "Unknown subscription type. Subscribe icon most likely exists on a page it shouldn't be on. Try refreshing the page and report bug or contact NBGallery support if the issue persists."
       end
