@@ -254,10 +254,11 @@ html lang="en"
             ==markdown.render(@warning.message)
         div.modals
           -url_check = request.path.split("/")
-          ==render partial: "modals/login_modal"
-          ==render partial: "modals/upload.slim"
           ==render partial: "modals/environment_loading"
+          ==render partial: "modals/generic_confirmation.slim"
+          ==render partial: "modals/login_modal"
           ==render partial: "modals/new_group.slim"
+          ==render partial: "modals/upload.slim"
           -if url_check[1] == "groups" && url_check[2] != nil && url_check[2][0..3] =~ /\d/ && @group != nil
             ==render partial: "modals/manage_group"
             ==render partial: "modals/view_group"
@@ -265,10 +266,14 @@ html lang="en"
             ==render partial: "modals/notebook_actions"
             -if url_check[3] != nil && url_check[3] == "metrics"
               ==render partial: "modals/notebook_metric_details"
-          -elsif url_check[1] == "change_requests"  && url_check[2] != nil && url_check[2][0..3] =~ /\d/
+          -elsif url_check[1] == "change_requests" && url_check[2] != nil && url_check[2][0..3] =~ /\d/
             ==render partial: "modals/approve_change_request"
-            ==render partial: "modals/decline_change_request"
             ==render partial: "modals/cancel_change_request"
+            ==render partial: "modals/decline_change_request"
+          -elsif url_check[1] == "admin" && url_check[2] == "org_chart"
+            ==render partial: "modals/add_org"
+            ==render partial: "modals/edit_org"
+            ==render partial: "modals/generic_file_upload.slim"
           -Dir["app/views/modals/custom/*"].each do |file|
             ==render :file => Rails.root.join(file).to_s
 

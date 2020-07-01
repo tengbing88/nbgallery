@@ -524,7 +524,7 @@ document.addEventListener("turbolinks:load", function(){
     $('#sortResultsForm').submit();
   }).val($('#sortHidden').val());
 
-  //More Actions Dropdown for Notebook
+  /* More Actions Dropdown for Notebook */
   $('#notebookGearDropdown').keypress(function(e){
     var keycode = (e.keyCode ? event.keyCode : event.which);
     if(keycode == '13' || keycode == '32'){
@@ -544,7 +544,9 @@ document.addEventListener("turbolinks:load", function(){
     return false;
   });
 
-  /* Changes Requests */
+  /* ===================================== */
+  /* ========== Change Requests ========== */
+  /* ===================================== */
   $('#changeReqViewButton').keypress(function(e){
     var keycode = (e.keyCode ? event.keyCode : event.which);
     if(keycode == '13' || keycode == '32'){
@@ -675,7 +677,6 @@ document.addEventListener("turbolinks:load", function(){
     $('#stageSubmit').attr('disabled', false);
   });
 
-
   $('#stageForm').validator().on('submit', function(e){
     if (!e.isDefaultPrevented()) {
       $('#stageSubmit').attr('disabled', true);
@@ -709,21 +710,33 @@ document.addEventListener("turbolinks:load", function(){
     };
   };
 
-  /* Uploading Org Structure */
-  /*$('#generateFromUsers').validator().on('submit', function(e){
+  /* ===================================== */
+  /* =============== Orgs ================ */
+  /* ===================================== */
+  /* Generate Org Structure from File */
+  $('#generateFromFile').on('click',function(e){
+    e.preventDefault();
+    $('#fileUploadModal').modal('show');
+    $('#genericFileUpload').attr('accept', '.csv');
+    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3ai</li></ul>")
+    return false;
+  });
+  $('#generateFromFileForm').on('submit', function(){
     $.ajax({
-      url: url,
+      url: '/admin/org_chart/generate_orgs_from_file',
       type: 'POST',
-      data: new FormData($('#uploadFileForm')[0]),
+      data: new FormData($('#addOrgForm')[0]),
+      cache: false,
+      contentType: false,
+      processData: false,
       success: function(response) {
-
       },
       error: function(response) {
-        $(document).trigger("upload_error", response);
+        bootbox.alert(response.responseText);
       }
     });
     return false;
-  });*/
+  });
 
   /* Adding new Org */
   $('#addOrg').on('click',function(e){
@@ -784,18 +797,19 @@ document.addEventListener("turbolinks:load", function(){
     var id = $(this).attr('data-id');
     $('#confirmationModal').modal('show');
     $('#hiddenConfirmationMetadata').val(id);
-    var text = "Delete organization: \"" + $(this).parent().children('span').text().trim() + "\"";
+    var text = 'Delete organization: "' + $(this).parent().children('span').text().trim() + '".';
     $('#confirmation1').text(text);
-    $('#confirmation2').text("Any and all children of this org will be shifted up one level.").parent().removeClass("hide")
+    $('#confirmation2').text('Any and all children of this org will be shifted up one level.').parent().removeClass('hide');
     return false;
   });
   $('#deleteOrgChart').on('click',function(e){
     e.preventDefault();
-    var id = "0";
+    var id = '0';
     $('#confirmationModal').modal('show');
     $('#hiddenConfirmationMetadata').val(id);
-    var text = "Delete all organizations. You cannot undo this.";
+    var text = 'Delete all organizations. You cannot undo this.';
     $('#confirmation1').text(text);
+    $('#confirmation2').parent().addClass('hide');
     return false;
   });
   $('body.page-admin-org_chart #confirmationModalForm').on('submit', function(){
@@ -810,6 +824,48 @@ document.addEventListener("turbolinks:load", function(){
       },
       error: function(response) {
         bootbox.alert(response.responseText);
+      }
+    });
+    return false;
+  });
+
+  /* ===================================== */
+  /* =========== Environments ============ */
+  /* ===================================== */
+  /* Add Environments */
+  $('#addEnvironment').on('click', function(){
+    $('#environmentLoading').modal('show');
+    $('#environmentLoading div div.modal-content').load('/environments/new');
+    return false;
+  });
+
+  /* Edit Environments */
+  $('.editEnvironment').on('click', function(){
+    $('#environmentLoading').modal('show');
+    var url = '/environments/' + encodeURIComponent($(this).attr('data-environmentName')) + '/edit'
+    $('#environmentLoading div div.modal-content').load(url);
+    return false;
+  });
+
+  /* Delete Environments */
+  $('.delEnvironment').on('click', function(){
+    var name = encodeURIComponent($(this).attr('data-environmentName'))
+    $('#confirmationModal').modal('show');
+    var text = 'Delete the reference to environment: "' + name + '".';
+    $('#confirmation1').text(text);
+    $('#hiddenConfirmationMetadata').val(name);
+    return false;
+  });
+  $('body.page-environments #confirmationModalForm').on('submit', function(){
+    var url = '/environments/' + $('#hiddenConfirmationMetadata').val();
+    $.ajax({
+      url: url,
+      type: 'DELETE',
+      success: function(){
+        location.reload();
+      },
+      error: function(response){
+        bootbox.alert('You had an error! ' + response.statusText);
       }
     });
     return false;

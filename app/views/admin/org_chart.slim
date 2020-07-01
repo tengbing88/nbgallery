@@ -5,9 +5,11 @@ div.content-container
     div.center.button-container
       form method="post" action="/admin/org_chart/generate_orgs_from_profiles" id="generateFromUsers"
         button.btn.btn-primary type="submit" Generate from User Profiles
-      button.btn.btn-primary id="generateFromFile" Upload from File
-      span.error
-        |  Not working yet
+      button.btn.btn-primary id="generateFromFile"
+        ' Upload from
+        span aria-hidden="true"
+          | .
+        | CSV File
       -#   Open modal to accept text file with tab separated orgs
       -#   Instruction on what it should look like on Modal
       -#   button.btn.btn-success Upload
@@ -17,22 +19,19 @@ div.content-container
   form
     div.checkbox
       label
+        input name="enableDynamicChanges" type="checkbox" value="true"
+          p
+            ' Enable textual changes to all users orgs they belong to when a rename or textual tweak is preformed on this page. Note that this would not be retroactive, would only actively change user orgs when an org of same name is changed on the org chart here. Any changes done before checkmark was enabled would not apply.
+            span.error Not working yet
+      label
         input name="disableOrgChanging" type="checkbox" value="true"
           p
-            ' Disable non-admin users from changing their org/department
+            ' Disable non-admin users from changing their org/department.
             span.error Not working yet
+      label
         input name="enableDropdownOrgs" type="checkbox" value="true"
           p
-            ' Change org/department field for users to a dropdown of only orgs listed in the org chart
+            ' Change org/department field for users to a dropdown of only orgs listed in the org chart.
             span.error Not working yet
-    -#   Add the "All" or "All Departments" as first element
-    -#   Grab all elements from org_performance_database where parent_org_id of 1 (which is "All")
-    -#   Sort those elements of alphabetically.
-    -#   Do a recursive loop that goes through all, finds all children and then prints in a bulleted list format adding an indent (in the form of a css-selector "indent-1", "indent-2", etc) to each. Will CSS will add increasing margins for each index.
     button.btn.btn-primary.modal-activate id="addOrg" Add Org
     button.btn.btn-danger.modal-activate id="deleteOrgChart" Delete All Orgs
-    -#   Open modal to Add New Org
-    -#   2 fields: name (first letter auto-capitalized but database stored as all lowers), and what it is a parent child of (default being "All" or "All Departments")
-    -#   if submit and parent child entry is not valid, throw error within modal
-    -#   button.btn.btn-success Add Org
-    -#       Ajax to method to update org_performance_database.

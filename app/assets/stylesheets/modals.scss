@@ -436,6 +436,11 @@ table .form-group {
     margin: 1em 0 2em;
 }
 
+/* ===== File Upload Modal ===== */
+body.page-admin-org_chart #fileUploadInfo ul {
+    margin: -10px 0 0 5px;
+}
+
 /* ===== Overwrite Modal ===== */
 
 /* ===== Propose Change Request ===== */

@@ -1,0 +1,24 @@
+div.modal.fade.notebookModalsSmall id="fileUploadModal" aria-modal="true" aria-labelledby="fileUploadModalHeader" aria-describedby="fileUploadModalDescription" role="dialog" style="display: none" tabindex="0"
+  div.modal-content
+    div.modal-header
+      h1.modal-title id="fileUploadModalHeader" Upload File
+      p.sr-only id="fileUploadModalDescription" Dialog for uploading specified file
+      button.close type="button" data-dismiss="modal"
+        span aria-hidden="true" &times;
+        span.sr-only Close Dialog
+    div.modal-body
+      form id="fileUploadModalForm" enctype="multipart/form-data" data-toggle="validator" role="form"
+        div.form-group.has-feedback
+          div.input-group
+            span.input-group-addon.upload-addon Notebook
+            input.form-control type="file" id="genericFileUpload" name="file" accept="*" required=true
+          span.glyphicon.form-control-feedback aria-hidden="true"
+        div.alert.alert-info
+          i.fa.fa-info-circle aria-hidden="true"
+          span id="fileUploadInfo" File upload accepts all file types.
+        div.help-block.with-errors
+        span.glyphicon.form-control-feedback aria-hidden="true"
+        div.modal-footer
+          div
+            button.btn.btn-danger type="button" data-dismiss="modal" Cancel
+            button.btn.btn-success type="submit" Upload

@@ -2390,6 +2390,9 @@ body.page-preferences {
         font-weight: bold;
     }
 }
+body.page-environments .delEnvironment i {
+    margin-left: 5px;
+}
 
 /* ===== Staged Notebooks Page ===== */
 a.delete-icon {

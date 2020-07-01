@@ -25,7 +25,7 @@ class OrgsController < ApplicationController
       if orgs.length > 1
         error += "Problem with database. Two or more orgs exist with this same name already. "
       elsif orgs.length == 1
-        error += "Can't have two orgs with the same name. Please choose a different name. "
+        error += "Can't have two orgs with the same name (ignores case). Please choose a different name. "
       end
     end
     if error == ""
@@ -44,12 +44,12 @@ class OrgsController < ApplicationController
     if Org.count == 0
       Org.create(name: "All")
       # orgs = User.where("org != ? AND org != ?", nil, "").uniq.pluck(:org).sort
-      orgs = User.where("org != \"\"").uniq.pluck(:org).sort
+      orgs = User.where("org != ''").uniq.pluck(:org).sort
       if (orgs.length < 1)
         flash[:success] = "Your users don't seem to have any orgs assigned to them. Generated org chart successful."
       elsif (orgs.length >= 1)
         orgs.each do |org|
-          Org.create(name: org, parent_id: "1")
+          Org.create(name: org, parent_id: Org.first.id)
         end
         flash[:success] = "Org chart generation successful."
       end
