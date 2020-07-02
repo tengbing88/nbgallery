@@ -32,11 +32,10 @@ class OrgsController < ApplicationController
       org = Org.create(name: name, parent_id: parent)
       org.save!
       flash[:success] = "Org added to org chart successfully."
-      redirect_to(:back)
     else
       flash[:error] = error;
-      redirect_to(:back)
     end
+    redirect_to(:back)
   end
 
   # POST /admin/org_chart/generate_orgs_from_profiles
@@ -61,7 +60,44 @@ class OrgsController < ApplicationController
 
   # POST /admin/org_chart/generate_orgs_from_file
   def generate_from_file
-    # flash[:success] = "Org chart generation successful."
+    puts ">"
+    puts ">"
+    puts ">"
+    error = ""
+    if params[:file].present?
+      file = params[:file]
+      name = params[:file].original_filename
+      puts "file is present and file: #{file} has name #{name}."
+      if file.size > 100000
+        error += "Are you sure you uploaded a real .csv file? Your file was too large. Expected under or around 1KB size, but received one of size: #{file.size/100000} KBs. "
+      end
+      if File.extname(name) != ".csv"
+        error += "Somehow you tricked the form and uploaded a non .csv file. Please upload a .csv file. Received file was \"#{name}\" with extension \"#{File.extname(name)}\"."
+      end
+    else
+      error += "File was not found to have been uploaded. Try again. "
+    end
+    if error == ""
+      puts "no error"
+      path = params[:file].path
+      new_file = ""
+      CSV.foreach(path) do |ele|
+        if ele.to_s[-1] == "]"
+          new_file += ele.to_s + "\n"
+        else
+          new_file += ele.to_s
+        end
+      end
+      puts new_file
+      flash[:success] = "Org chart generation successful."
+    else
+      puts "error of #{error}"
+      flash[:error] = error;
+    end
+    # params[:file].delete
+    puts "<"
+    puts "<"
+    puts "<"
     redirect_to(:back)
   end
 
@@ -100,11 +136,10 @@ class OrgsController < ApplicationController
       org.parent_id = parent
       org.save!
       flash[:success] = "Org was modified successfully."
-      redirect_to(:back)
     else
       flash[:error] = error;
-      redirect_to(:back)
     end
+    redirect_to(:back)
   end
 
   # POST /admin/org_chart/delete
@@ -133,11 +168,10 @@ class OrgsController < ApplicationController
       flash[:success] = "Entire org chart and orgs deleted successful."
     end
     if error == ""
-      redirect_to(:back)
     else
       flash[:error] = error;
-      redirect_to(:back)
     end
+    redirect_to(:back)
   end
 
 end

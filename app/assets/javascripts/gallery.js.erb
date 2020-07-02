@@ -718,23 +718,28 @@ document.addEventListener("turbolinks:load", function(){
     e.preventDefault();
     $('#fileUploadModal').modal('show');
     $('#genericFileUpload').attr('accept', '.csv');
-    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3ai</li></ul>")
+    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3ai</li></ul>");
     return false;
   });
-  $('#generateFromFileForm').on('submit', function(){
-    $.ajax({
-      url: '/admin/org_chart/generate_orgs_from_file',
-      type: 'POST',
-      data: new FormData($('#addOrgForm')[0]),
-      cache: false,
-      contentType: false,
-      processData: false,
-      success: function(response) {
-      },
-      error: function(response) {
-        bootbox.alert(response.responseText);
+  $('#fileUploadModalForm').on('submit', function(e){
+    e.preventDefault();
+    var formData = new FormData($('#fileUploadModalForm')[0]);
+    var formData = new FormData();
+    const file = document.getElementById('genericFileUpload').files[0];
+    formData.append('file', file);
+    var request = new XMLHttpRequest();
+    request.open("POST", "/admin/org_chart/generate_orgs_from_file");
+    request.send(formData);
+    /*request.onload = function() {
+      if(request.status[0] != "5" && request.status[0] != "4") {
+        /*console.log("reloading")
+        location.reload();
+        bootbox.alert(request.responseText);
       }
-    });
+      else {
+        bootbox.alert(request.responseText);
+      }
+    };*/
     return false;
   });
 

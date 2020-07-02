@@ -788,7 +788,8 @@ span.review-alert {
     display: none;
 }
 .alert-info,
-.alert-alert {
+.alert-alert,
+.alert-notice {
     @extend %info-alert-styles;
     table {
         @extend %info-alert-styles;
