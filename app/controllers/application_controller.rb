@@ -98,7 +98,7 @@ class ApplicationController < ActionController::Base
   # Set page param for pagination
   def set_page_and_sort
     @page = params[:page].presence || 1
-    allowed_sort = %w[updated_at created_at title score views stars runs health trendiness]
+    allowed_sort = %w[updated_at created_at title score views stars runs downloads health trendiness]
     default_sort = params[:q].blank? ? :trendiness : :score
     default_sort = :updated_at if rss_request?
     @sort = (allowed_sort.include?(params[:sort]) ? params[:sort] : default_sort).to_sym
@@ -245,7 +245,7 @@ class ApplicationController < ActionController::Base
         else
           title = "#{@notebook.title}"
         end
-      elsif url_check[1] == "notebooks" && params[:q] != nil
+      elsif url_check[1] == "notebooks" && params[:q].present?
         title = "Search for \"#{params[:q]}\""
       elsif url_check[1] == "notebooks"
         if url_check[2] == nil
@@ -503,7 +503,7 @@ class ApplicationController < ActionController::Base
   end
 
   def verify_login
-    raise User::NotAuthorized, 'Must be logged in.' unless @user.member?
+    raise User::NotAuthorized, 'You must be logged in to perform this action.' unless @user.member?
   end
 
   def verify_admin

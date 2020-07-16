@@ -45,3 +45,31 @@ Admin users can then modify other user accounts from the `/users` endpoint, avai
 ## Scheduled jobs
 
 nbgallery has a number of computational and cleanup tasks that should run on a periodic basis.  [More detail here](scheduled_jobs.md).
+
+## Federated Search
+
+nbgallery can be configured to perform federated search across a number of galleries. To do this, the following configuration needs to be set:
+```yaml
+search:
+  federated:
+    - url: http://myurl.com
+      name: My External Gallery
+      tagline: |
+        <div>This is optional but can contain raw HTML</div>
+```
+
+The external gallery will need to accept cross origin requests from the connecting gallery. This can be done in the external gallery's configuration
+as follows:
+```yaml
+search:
+  allowed_cors:
+    - myurl.com
+```
+This value may be a regex.  At this time, it is not possible to allow all origins as it will use authentication in the cors requests.
+
+## Seed the nbgallery with Notebooks
+
+You can now side-load the gallery from the command line using the bulk_import script.  Place a collection of ipynb files in a directory and ensure the user you want to own the notebooks exists in the database. From the root directory of the gallery, run `bundle exec rails runner script/bulk_import.rb`. The script will prompt you for the username of the creator, optionally the username or group name for the owner, and directory for the notebooks to import.
+
+The title of the imported notebook will be based on the name of the file with any underscores (_) replaced by a space and the extension removed.
+The description of the notebook will default to "Automatically Uploaded" but then the script will look for the first markdown field with at least 20 characters excluding any headings. It will truncate the description to the first 250 characters with and ellipses added to the end if it was over 250 characters.
