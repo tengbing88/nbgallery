@@ -1,3 +1,4 @@
+div.orgs-special-alert-container
 div.content-container
   h1.center Org Chart
   br
@@ -10,10 +11,6 @@ div.content-container
         span aria-hidden="true"
           | .
         | CSV File
-      -#   Open modal to accept text file with tab separated orgs
-      -#   Instruction on what it should look like on Modal
-      -#   button.btn.btn-success Upload
-      -#      Ajax to method that reads the text file line by line and creates a bunch of database additions with the proper hierarchy structure (this is what we will use to keep continuity between Dev -> Prod). Throw error if text file is blank or if in wrong format.
   -else
     ==render partial: "org_display"
   form

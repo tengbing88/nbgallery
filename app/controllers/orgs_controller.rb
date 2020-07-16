@@ -35,7 +35,11 @@ class OrgsController < ApplicationController
     else
       flash[:error] = error;
     end
-    redirect_to(:back)
+    if request.xhr?
+      render :js => "window.location = '#{admin_org_chart_path}'"
+    else
+      redirect_to(:back)
+    end
   end
 
   # POST /admin/org_chart/generate_orgs_from_profiles
@@ -55,7 +59,11 @@ class OrgsController < ApplicationController
     else
       flash[:error] = "Org Chart has aleady been generated. If you wish to generate from user profiles you must first delete the current org chart."
     end
-    redirect_to(:back)
+    if request.xhr?
+      render :js => "window.location = '#{admin_org_chart_path}'"
+    else
+      redirect_to(:back)
+    end
   end
 
   # POST /admin/org_chart/generate_orgs_from_file
@@ -90,15 +98,26 @@ class OrgsController < ApplicationController
       end
       puts new_file
       flash[:success] = "Org chart generation successful."
+      response.headers['X-Message-Type'] = flash[:success]
+      response.headers['X-Message'] = "Org chart generation successful."
     else
       puts "error of #{error}"
-      flash[:error] = error;
+      flash[:error] = error
+      response.headers['X-Message-Type'] = flash[:error]
+      response.headers['X-Message'] = error
     end
     # params[:file].delete
     puts "<"
     puts "<"
     puts "<"
-    redirect_to(:back)
+    if request.xhr?
+      render :js => "window.location = '#{admin_org_chart_path}'"
+    else
+      redirect_to(:back)
+    end
+    #respond_to do |format|
+    #  format.html {redirect_to(:back)}
+    #end
   end
 
   # PATCH /admin/org_chart/edit
@@ -139,7 +158,11 @@ class OrgsController < ApplicationController
     else
       flash[:error] = error;
     end
-    redirect_to(:back)
+    if request.xhr?
+      render :js => "window.location = '#{admin_org_chart_path}'"
+    else
+      redirect_to(:back)
+    end
   end
 
   # POST /admin/org_chart/delete
@@ -171,7 +194,11 @@ class OrgsController < ApplicationController
     else
       flash[:error] = error;
     end
-    redirect_to(:back)
+    if request.xhr?
+      render :js => "window.location = '#{admin_org_chart_path}'"
+    else
+      redirect_to(:back)
+    end
   end
 
 end

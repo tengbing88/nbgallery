@@ -730,6 +730,23 @@ $(document).ready(function(){
     var request = new XMLHttpRequest();
     request.open("POST", "/admin/org_chart/generate_orgs_from_file");
     request.send(formData);
+    /*request.onload = () => {
+      console.log(request.response);
+    }*/
+    request.onreadystatechange = function() {
+      if(request.status[0] != "5" && request.status[0] != "4") {
+        //location.reload();
+        var msg = request.getResponseHeader('X-Message');
+        var type = request.getResponseHeader('X-Message-Type');
+        $('.orgs-special-alert-container').empty();
+        if(type == "flash[:success]") {
+          $('.orgs-special-alert-container').append('<div class="alert alert-error content-body-alert" role="alert"><i class="fa fa-check-circle" aria-hidden="true"></i>' + msg + '<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
+        }
+        else {
+          $('.orgs-special-alert-container').append('<div class="alert alert-error content-body-alert" role="alert"><i class="fa fa-times-circle" aria-hidden="true"></i>' + msg + '<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
+        }
+      }
+    }
     /*request.onload = function() {
       if(request.status[0] != "5" && request.status[0] != "4") {
         /*console.log("reloading")
