@@ -723,17 +723,41 @@ $(document).ready(function(){
   });
   $('#fileUploadModalForm').on('submit', function(e){
     e.preventDefault();
-    var formData = new FormData($('#fileUploadModalForm')[0]);
+
+    /*var formData = new FormData($('#fileUploadModalForm')[0]);
     var formData = new FormData();
     const file = document.getElementById('genericFileUpload').files[0];
     formData.append('file', file);
     var request = new XMLHttpRequest();
     request.open("POST", "/admin/org_chart/generate_orgs_from_file");
-    request.send(formData);
+    request.send(formData);*/
+
+    $('#fileUploadModalForm .btn-success').attr('disabled', true);
+    var url = '/admin/org_chart/generate_orgs_from_file'
+    $.ajax({
+      url: url,
+      type: 'POST',
+      data: new FormData($('#fileUploadModalForm')[0]),
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+        /*$('#uploadFeedbackProgressBar').html('');
+        var stagingResponse = response;
+        $('#stagedName').val(stagingResponse['staging_id']);
+        $('#stagingId').val(stagingResponse['staging_id']);
+        $('#stageUpload').modal('show');
+        $('#uploadFileModal').modal("hide");
+        $('#uploadFileSubmit').attr('disabled', false);*/
+      },
+      error: function(response) {
+        bootbox.alert(response.responseText);
+      }
+    });
     /*request.onload = () => {
       console.log(request.response);
     }*/
-    request.onreadystatechange = function() {
+    /*request.onreadystatechange = function() {
       if(request.status[0] != "5" && request.status[0] != "4") {
         //location.reload();
         var msg = request.getResponseHeader('X-Message');
@@ -746,17 +770,22 @@ $(document).ready(function(){
           $('.orgs-special-alert-container').append('<div class="alert alert-error content-body-alert" role="alert"><i class="fa fa-times-circle" aria-hidden="true"></i>' + msg + '<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
         }
       }
-    }
-    /*request.onload = function() {
-      if(request.status[0] != "5" && request.status[0] != "4") {
-        /*console.log("reloading")
+    }*/
+    /*request.responseType = 'text';
+    request.onload = function() {
+      if(request.readyState === request.DONE) {
+        console.log("REQUEST: " + request.response);
+        console.log("TEXT: " + request.responseText);
+      }*/
+      /*if(request.status[0] != "5" && request.status[0] != "4") {
+        console.log("reloading")
         location.reload();
         bootbox.alert(request.responseText);
       }
       else {
         bootbox.alert(request.responseText);
-      }
-    };*/
+      }*/
+    //};
     return false;
   });
 

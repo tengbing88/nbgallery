@@ -98,26 +98,32 @@ class OrgsController < ApplicationController
       end
       puts new_file
       flash[:success] = "Org chart generation successful."
-      response.headers['X-Message-Type'] = flash[:success]
-      response.headers['X-Message'] = "Org chart generation successful."
+      # response.headers['X-Message-Type'] = "success"
+      # response.headers['X-Message'] = "Org chart generation successful."
+      # response.headers['X-Message-Type'] = flash[:success]
+      # response.headers['X-Message'] = flash[:success]
+
     else
       puts "error of #{error}"
       flash[:error] = error
-      response.headers['X-Message-Type'] = flash[:error]
-      response.headers['X-Message'] = error
+      # response.headers['X-Message-Type'] = "error"
+      # response.headers['X-Message'] = error
+      # response.headers['X-Message-Type'] = flash[:error]
+      # response.headers['X-Message'] = flash[:error]
     end
     # params[:file].delete
     puts "<"
     puts "<"
     puts "<"
-    if request.xhr?
-      render :js => "window.location = '#{admin_org_chart_path}'"
-    else
-      redirect_to(:back)
-    end
-    #respond_to do |format|
-    #  format.html {redirect_to(:back)}
+    #if request.xhr?
+    #  render :js => "window.location = '#{admin_org_chart_path}'"
+    #else
+    #  redirect_to(:back)
     #end
+    respond_to do |format|
+      format.html {redirect_to(:back)}
+      format.js
+    end
   end
 
   # PATCH /admin/org_chart/edit
