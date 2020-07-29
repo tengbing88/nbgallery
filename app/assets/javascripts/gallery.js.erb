@@ -742,6 +742,7 @@ $(document).ready(function(){
       contentType: false,
       processData: false,
       success: function(response) {
+        response(response);
         /*$('#uploadFeedbackProgressBar').html('');
         var stagingResponse = response;
         $('#stagedName').val(stagingResponse['staging_id']);
@@ -751,7 +752,8 @@ $(document).ready(function(){
         $('#uploadFileSubmit').attr('disabled', false);*/
       },
       error: function(response) {
-        bootbox.alert(response.responseText);
+        var error = JSON.stringify(JSON.parse(response.responseText),null,2);
+        bootbox.alert(error);
       }
     });
     /*request.onload = () => {

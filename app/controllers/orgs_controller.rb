@@ -68,61 +68,62 @@ class OrgsController < ApplicationController
 
   # POST /admin/org_chart/generate_orgs_from_file
   def generate_from_file
-    puts ">"
-    puts ">"
-    puts ">"
     error = ""
     if params[:file].present?
       file = params[:file]
       name = params[:file].original_filename
       puts "file is present and file: #{file} has name #{name}."
       if file.size > 100000
-        error += "Are you sure you uploaded a real .csv file? Your file was too large. Expected under or around 1KB size, but received one of size: #{file.size/100000} KBs. "
-      end
-      if File.extname(name) != ".csv"
-        error += "Somehow you tricked the form and uploaded a non .csv file. Please upload a .csv file. Received file was \"#{name}\" with extension \"#{File.extname(name)}\"."
+        error += "Are you sure you uploaded a real .csv file? Your file was too large. Expected under or around 1KB-10KB size, but received one of size: #{file.size/1000} KBs. "
+      elsif File.extname(name) != ".csv"
+        error += "Somehow you tricked the form and uploaded a non .csv file. Please upload a .csv file. Received file was #{name} with extension #{File.extname(name)}."
       end
     else
-      error += "File was not found to have been uploaded. Try again. "
+      error += "File was not uploaded. Try again. "
     end
     if error == ""
       puts "no error"
-      path = params[:file].path
+      file = params[:file].path
       new_file = ""
-      CSV.foreach(path) do |ele|
+      csv = CSV.parse(File.read(file))
+      CSV.foreach(file) do |ele|
         if ele.to_s[-1] == "]"
           new_file += ele.to_s + "\n"
         else
           new_file += ele.to_s
         end
       end
+      csv.each_with_index do |row,row_index|
+        csv[row_index].each_with_index do |col,col_index|
+          parent = ""
+          if (col != nil && col.to_s.strip != "")
+            puts ("Column #{col_index + 1}")
+            puts ("Row #{row_index + 1}")
+            #csv.each_with_index do |ele,index|
+              #puts ele
+              #puts index
+              # if (ele != nil && ele.strip != "" && index != col_index)
+              #if (csv[index][row_index] != nil && csv[index][row_index].strip != "" && index != col_index)
+              #  puts csv[index][row_index]
+                #puts index
+                #puts col_index
+              #  error = "CSV file was improperly formatted. Includes multiple values on the same row. Only one element can exist per row. Problem found at row #{row_index + 1} column #{col_index + 1} and #{index + 1}."
+              #  break
+              #  puts "test"
+              #end
+            #end
+          end
+        end
+      end
       puts new_file
-      flash[:success] = "Org chart generation successful."
-      # response.headers['X-Message-Type'] = "success"
-      # response.headers['X-Message'] = "Org chart generation successful."
-      # response.headers['X-Message-Type'] = flash[:success]
-      # response.headers['X-Message'] = flash[:success]
-
+      if error != ""
+        render json: { Error: error }, status: :internal_server_error
+      else
+        flash[:success] = "Org chart generation successful."
+        redirect_to(:back)
+      end
     else
-      puts "error of #{error}"
-      flash[:error] = error
-      # response.headers['X-Message-Type'] = "error"
-      # response.headers['X-Message'] = error
-      # response.headers['X-Message-Type'] = flash[:error]
-      # response.headers['X-Message'] = flash[:error]
-    end
-    # params[:file].delete
-    puts "<"
-    puts "<"
-    puts "<"
-    #if request.xhr?
-    #  render :js => "window.location = '#{admin_org_chart_path}'"
-    #else
-    #  redirect_to(:back)
-    #end
-    respond_to do |format|
-      format.html {redirect_to(:back)}
-      format.js
+      render json: { Error: error }, status: :internal_server_error
     end
   end
 
