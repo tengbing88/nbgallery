@@ -99,7 +99,7 @@ class OrgsController < ApplicationController
           if (col != nil && col.to_s.strip != "")
             puts ("Column #{col_index + 1}")
             puts ("Row #{row_index + 1}")
-            #csv.each_with_index do |ele,index|
+            csv.each_with_index do |ele,index|
               #puts ele
               #puts index
               # if (ele != nil && ele.strip != "" && index != col_index)
@@ -111,7 +111,7 @@ class OrgsController < ApplicationController
               #  break
               #  puts "test"
               #end
-            #end
+            end
           end
         end
       end
