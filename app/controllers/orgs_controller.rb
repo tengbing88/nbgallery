@@ -82,41 +82,83 @@ class OrgsController < ApplicationController
       error += "File was not uploaded. Try again. "
     end
     if error == ""
-      puts "no error"
       file = params[:file].path
-      new_file = ""
       csv = CSV.parse(File.read(file))
-      CSV.foreach(file) do |ele|
-        if ele.to_s[-1] == "]"
-          new_file += ele.to_s + "\n"
-        else
-          new_file += ele.to_s
-        end
-      end
-      csv.each_with_index do |row,row_index|
-        csv[row_index].each_with_index do |col,col_index|
-          parent = ""
-          if (col != nil && col.to_s.strip != "")
-            puts ("Column #{col_index + 1}")
-            puts ("Row #{row_index + 1}")
-            csv.each_with_index do |ele,index|
-              #puts ele
-              #puts index
-              # if (ele != nil && ele.strip != "" && index != col_index)
-              #if (csv[index][row_index] != nil && csv[index][row_index].strip != "" && index != col_index)
-              #  puts csv[index][row_index]
-                #puts index
-                #puts col_index
-              #  error = "CSV file was improperly formatted. Includes multiple values on the same row. Only one element can exist per row. Problem found at row #{row_index + 1} column #{col_index + 1} and #{index + 1}."
-              #  break
-              #  puts "test"
-              #end
+      problem = false
+      if Org.count == 0
+        Org.create(name: "All")
+        last_element = nil
+        last_element_col = nil
+        csv.each_with_index do |row,row_index|
+          csv[row_index].each_with_index do |col,col_index|
+            if (col != nil && col.to_s.strip != "")
+
+              # Check if there are duplicated orgs
+              elements = csv.flatten
+              duplicated = false
+              elements.each do |ele|
+                if ele == col && duplicated == true
+                  error = "CSV file has an org included more than once. Problem found for org '#{ele}'."
+                  problem = true
+                  break
+                elsif ele == col
+                  duplicated = true
+                end
+              end
+
+              # Check if CSV is improperly formatted
+              csv[row_index].each_with_index do |ele,index|
+                if (ele != nil && ele.to_s.strip != "" && index != col_index)
+                  if col_index < index
+                    error = "CSV file was improperly formatted. Includes multiple values on the same row. Only one element can exist per row. Problem found at row #{row_index + 1} column #{col_index + 1} and #{index + 1}."
+                  else
+                    error = "CSV file was improperly formatted. Includes multiple values on the same row. Only one element can exist per row. Problem found on row #{row_index + 1} column #{index + 1} and #{col_index + 1}."
+                  end
+                  problem = true
+                  break
+                end
+              end
+
+              # Creating Orgs
+              if !problem && col != nil && col.to_s.strip != ""
+                # If no elements have been added yet
+                if last_element_col == nil
+                  last_element = Org.create(name: col.to_s, parent_id: nil)
+                  last_element.save!
+                  last_element_col = col_index
+                # If last element is the parent of the current element
+                elsif last_element_col < col_index
+                  last_element = Org.create(name: col.to_s, parent_id: last_element.id)
+                  last_element.save!
+                  last_element_col = col_index
+                elsif
+                  while (last_element_col >= col_index)
+                    last_element = Org.find(last_element.parent_id)
+                  end
+                  # Finish!!!!!!!!
+                else
+                  error = "Encounted unknown problem while populating database with org from CSV file. Issue occured at row #{row_index + 1} column #{index + 1}."
+                  break
+                end
+
+                # if true
+                #   Org.create(name: col.to_s, parent_id: Org.where(name: parent).pluck(:id))
+                # end
+              end
+            end
+            if problem
+              break
             end
           end
+          if problem
+            break
+          end
         end
+      else
+        error = "Org table is already populated. CSV file was rejected. Refresh the page."
       end
-      puts new_file
       if error != ""
+        Org.delete_all
         render json: { Error: error }, status: :internal_server_error
       else
         flash[:success] = "Org chart generation successful."
