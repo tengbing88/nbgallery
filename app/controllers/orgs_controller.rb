@@ -86,9 +86,9 @@ class OrgsController < ApplicationController
       csv = CSV.parse(File.read(file))
       problem = false
       if Org.count == 0
-        Org.create(name: "All")
-        last_element = nil
-        last_element_col = nil
+        last_element = Org.create(name: "All")
+        last_element.save!
+        last_element_col = -1
         csv.each_with_index do |row,row_index|
           csv[row_index].each_with_index do |col,col_index|
             if (col != nil && col.to_s.strip != "")
@@ -121,29 +121,22 @@ class OrgsController < ApplicationController
 
               # Creating Orgs
               if !problem && col != nil && col.to_s.strip != ""
-                # If no elements have been added yet
-                if last_element_col == nil
-                  last_element = Org.create(name: col.to_s, parent_id: nil)
-                  last_element.save!
-                  last_element_col = col_index
-                # If last element is the parent of the current element
-                elsif last_element_col < col_index
+                if last_element_col < col_index
                   last_element = Org.create(name: col.to_s, parent_id: last_element.id)
                   last_element.save!
                   last_element_col = col_index
-                elsif
+                elsif last_element_col >= col_index
                   while (last_element_col >= col_index)
                     last_element = Org.find(last_element.parent_id)
+                    last_element_col = last_element_col - 1
                   end
-                  # Finish!!!!!!!!
+                  last_element = Org.create(name: col.to_s, parent_id: last_element.id)
+                  last_element.save!
+                  last_element_col = col_index
                 else
-                  error = "Encounted unknown problem while populating database with org from CSV file. Issue occured at row #{row_index + 1} column #{index + 1}."
-                  break
+                  error = "Unknown problem encountered while populating database with org from CSV file. Issue occured at row #{row_index + 1} column #{col_index + 1}."
+                  problem = true
                 end
-
-                # if true
-                #   Org.create(name: col.to_s, parent_id: Org.where(name: parent).pluck(:id))
-                # end
               end
             end
             if problem
@@ -161,8 +154,8 @@ class OrgsController < ApplicationController
         Org.delete_all
         render json: { Error: error }, status: :internal_server_error
       else
-        flash[:success] = "Org chart generation successful."
-        redirect_to(:back)
+        # redirect_to(:back)
+        # flash[:success] = "Org chart generation successful."
       end
     else
       render json: { Error: error }, status: :internal_server_error

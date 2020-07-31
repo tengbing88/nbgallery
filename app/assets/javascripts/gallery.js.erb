@@ -718,20 +718,11 @@ $(document).ready(function(){
     e.preventDefault();
     $('#fileUploadModal').modal('show');
     $('#genericFileUpload').attr('accept', '.csv');
-    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3ai</li></ul>");
+    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3bi</li></ul>");
     return false;
   });
   $('#fileUploadModalForm').on('submit', function(e){
     e.preventDefault();
-
-    /*var formData = new FormData($('#fileUploadModalForm')[0]);
-    var formData = new FormData();
-    const file = document.getElementById('genericFileUpload').files[0];
-    formData.append('file', file);
-    var request = new XMLHttpRequest();
-    request.open("POST", "/admin/org_chart/generate_orgs_from_file");
-    request.send(formData);*/
-
     $('#fileUploadModalForm .btn-success').attr('disabled', true);
     var url = '/admin/org_chart/generate_orgs_from_file'
     $.ajax({
@@ -741,53 +732,17 @@ $(document).ready(function(){
       cache: false,
       contentType: false,
       processData: false,
-      success: function(response) {
-        response(response);
-        /*$('#uploadFeedbackProgressBar').html('');
-        var stagingResponse = response;
-        $('#stagedName').val(stagingResponse['staging_id']);
-        $('#stagingId').val(stagingResponse['staging_id']);
-        $('#stageUpload').modal('show');
-        $('#uploadFileModal').modal("hide");
-        $('#uploadFileSubmit').attr('disabled', false);*/
+      success: function() {
+        location.reload();
+        //$('.orgs-special-alert-container').append('<div class="alert alert-success content-body-alert" role="alert"><i class="fa fa-check-circle" aria-hidden="true"></i>Org chart generation successful.<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
+        //$('#fileUploadModal').modal('hide');
       },
       error: function(response) {
         var error = JSON.stringify(JSON.parse(response.responseText),null,2);
         bootbox.alert(error);
+        $('#fileUploadModalForm .btn-success').attr('disabled', false);
       }
     });
-    /*request.onload = () => {
-      console.log(request.response);
-    }*/
-    /*request.onreadystatechange = function() {
-      if(request.status[0] != "5" && request.status[0] != "4") {
-        //location.reload();
-        var msg = request.getResponseHeader('X-Message');
-        var type = request.getResponseHeader('X-Message-Type');
-        $('.orgs-special-alert-container').empty();
-        if(type == "flash[:success]") {
-          $('.orgs-special-alert-container').append('<div class="alert alert-error content-body-alert" role="alert"><i class="fa fa-check-circle" aria-hidden="true"></i>' + msg + '<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
-        }
-        else {
-          $('.orgs-special-alert-container').append('<div class="alert alert-error content-body-alert" role="alert"><i class="fa fa-times-circle" aria-hidden="true"></i>' + msg + '<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
-        }
-      }
-    }*/
-    /*request.responseType = 'text';
-    request.onload = function() {
-      if(request.readyState === request.DONE) {
-        console.log("REQUEST: " + request.response);
-        console.log("TEXT: " + request.responseText);
-      }*/
-      /*if(request.status[0] != "5" && request.status[0] != "4") {
-        console.log("reloading")
-        location.reload();
-        bootbox.alert(request.responseText);
-      }
-      else {
-        bootbox.alert(request.responseText);
-      }*/
-    //};
     return false;
   });
 
