@@ -267,6 +267,12 @@ class ApplicationController < ActionController::Base
         else
           title = "Group \"#{@group.name}\""
         end
+      elsif url_check[1] == "orgs"
+        if url_check[2] == nil
+          title = "All Orgs"
+        else
+          title = "Org \"#{@group.name}\""
+        end
       elsif url_check[1] == "users"
         if url_check[2] == nil
           title = "All Users"
@@ -320,6 +326,8 @@ class ApplicationController < ActionController::Base
           title = "User Similarity Dashboard"
         elsif url_check[2] == "user_summary"
           title = "User Summary Dashboard"
+        elsif url_check[2] == "org_chart"
+          title = "Org Chart"
         elsif url_check[2] == "warning"
           title = "Admin Site Banner"
         else

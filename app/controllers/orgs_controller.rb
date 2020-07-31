@@ -3,8 +3,14 @@ class OrgsController < ApplicationController
   before_action :verify_admin
   skip_before_filter :verify_authenticity_token
 
-  # GET /admin/org_chart/
+  # GET /orgs
   def index
+    
+  end
+
+  # GET /orgs/:name
+  def show
+
   end
 
   # PATCH /admin/org_chart/add
@@ -97,12 +103,14 @@ class OrgsController < ApplicationController
               elements = csv.flatten
               duplicated = false
               elements.each do |ele|
-                if ele == col && duplicated == true
-                  error = "CSV file has an org included more than once. Problem found for org '#{ele}'."
-                  problem = true
-                  break
-                elsif ele == col
-                  duplicated = true
+                if ele.to_s.downcase == col.to_s.downcase
+                  if duplicated == true
+                    error = "CSV file has an org included more than once. Duplicated org is '#{ele}'."
+                    problem = true
+                    break
+                  else
+                    duplicated = true
+                  end
                 end
               end
 
@@ -154,8 +162,8 @@ class OrgsController < ApplicationController
         Org.delete_all
         render json: { Error: error }, status: :internal_server_error
       else
-        # redirect_to(:back)
-        # flash[:success] = "Org chart generation successful."
+        flash[:success] = "Org chart generation successful."
+        render json: {forward: org_chart_index_path}
       end
     else
       render json: { Error: error }, status: :internal_server_error

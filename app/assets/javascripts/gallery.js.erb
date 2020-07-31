@@ -718,7 +718,7 @@ $(document).ready(function(){
     e.preventDefault();
     $('#fileUploadModal').modal('show');
     $('#genericFileUpload').attr('accept', '.csv');
-    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files</li><li>No org can be duplicated (ignoring case)</li><li>Should not include the 'All Departments' as that will automatically be injected</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3bi</li></ul>");
+    $('#fileUploadInfo').html("<ul><li>File upload accepts only .csv files (also means no commas can be used in org names).</li><li>No org can be duplicated (ignoring case).</li><li>Should not include the 'All' or 'All Departments' as that will automatically be injected.</li><li>No more than one org can exist on each row.</li><li>The proper format should be: <br/>org1 , ,<br/>, org1a ,<br/>org2 , ,<br/>org3 , ,<br/>, org3a ,<br/>, org3b ,<br/>, , org3bi</li></ul>");
     return false;
   });
   $('#fileUploadModalForm').on('submit', function(e){
@@ -732,10 +732,8 @@ $(document).ready(function(){
       cache: false,
       contentType: false,
       processData: false,
-      success: function() {
-        location.reload();
-        //$('.orgs-special-alert-container').append('<div class="alert alert-success content-body-alert" role="alert"><i class="fa fa-check-circle" aria-hidden="true"></i>Org chart generation successful.<button class="close" aria-hidden="false" aria-label="Close" data-dismiss="alert" type="button"> &times;</button></div>');
-        //$('#fileUploadModal').modal('hide');
+      success: function(response) {
+        window.location=response.forward;
       },
       error: function(response) {
         var error = JSON.stringify(JSON.parse(response.responseText),null,2);

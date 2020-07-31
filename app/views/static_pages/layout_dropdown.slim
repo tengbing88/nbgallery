@@ -46,12 +46,12 @@ li
     span.badge.pull-right ==@user.readable_notebooks.count
     span.sr-only #{" total"}
     span.hidden aria-hidden="true" #{")"}
-li.languages
-  a href="/languages"
-    span.tab.no-wrap.entry All Languages
+li.orgs
+  a href="#{orgs_path}"
+    span.tab.no-wrap.entry All Orgs
     span.sr-only #{" "}
     span.hidden aria-hidden="true" #{"("}
-    span.badge.pull-right ==Notebook.language_counts(@user).count
+    span.badge.pull-right ==Org.count
     span.sr-only #{" total"}
     span.hidden aria-hidden="true" #{")"}
 li.groups
@@ -60,6 +60,14 @@ li.groups
     span.sr-only #{" "}
     span.hidden aria-hidden="true" #{"("}
     span.badge.pull-right ==Group.readable_by(@user).count
+    span.sr-only #{" total"}
+    span.hidden aria-hidden="true" #{")"}
+li.languages
+  a href="/languages"
+    span.tab.no-wrap.entry All Languages
+    span.sr-only #{" "}
+    span.hidden aria-hidden="true" #{"("}
+    span.badge.pull-right ==Notebook.language_counts(@user).count
     span.sr-only #{" total"}
     span.hidden aria-hidden="true" #{")"}
 li.tags
