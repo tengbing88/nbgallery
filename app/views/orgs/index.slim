@@ -2,7 +2,7 @@
 -if (Org.count == 2 && Org.last.name == "Unknown") || (Org.count < 2)
   no_orgs = true
 div.content-container
-  h1 All Orgs
+  h1.center All Orgs
   div.org-stats.flex
     div.org-stats-by-org
       h2 Top Orgs
@@ -14,10 +14,10 @@ div.content-container
           -top_orgs = Org.where.not(parent_id: nil).limit(5)
           -top_orgs.each do |org|
               li
-                a href="#" #{org.name}
+                a href="#{org_path(org)}" #{org.name}
                 -unless FALSE
                   span.tooltips title="This notebook has been starred #{"2"} times"
-                    span.glyphicon.glyphicon-star.action-icon.view-summary
+                    span.glyphicon.glyphicon-star-empty.action-icon.view-summary
                     span.sr-only
                       ' Stars
                     span.hidden aria-hidden="true" #{"("}
@@ -60,11 +60,12 @@ div.content-container
           -# Sort (but too lazy to do it now)
           -top_users = User.all.limit(5)
           -top_users.each do |user|
-              li
-                a href="#" #{user.name}
+              li.org-top-user
+                i.fa.fa-user aria-hidden="true"
+                a href="#{user_path(user)}" #{user.name}
                 -unless FALSE
                   span.tooltips title="This notebook has been starred #{"2"} times"
-                    span.glyphicon.glyphicon-star.action-icon.view-summary
+                    span.glyphicon.glyphicon-star-empty.action-icon.view-summary
                     span.sr-only
                       ' Stars
                     span.hidden aria-hidden="true" #{"("}

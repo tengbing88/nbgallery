@@ -2641,10 +2641,12 @@ body.page-reviews-id {
     }
 }
 .recommended-user a,
-.recommended-user .fa-user {
+.recommended-user .fa-user,
+.org-top-user .fa-user {
     color: $primary-link-color-in-table;
 }
-.recommended-user a {
+.recommended-user a,
+.org-top-user a {
     left: -1em;
     padding-left: 1em;
     position: relative;
@@ -3113,11 +3115,32 @@ body.page-admin-org_chart {
         visibility: visible;
     }
 }
+.org-stats.flex > div {
+    flex: 1 1 45%;
+}
 .org-list-container {
     border: 1px solid #eee;
     padding: 1em 0 .5em;
     &.enlarge {
         font-size: 120%;
+    }
+}
+.org-stats {
+    li a {
+        font-size: 150%;
+        margin-right: .5em;
+    }
+    li > span {
+        position: relative;
+        top: .05em;
+    }
+    .org-stats-by-user li a {
+        margin-right: -.5em;
+    }
+    .org-top-user i {
+        font-size: 120%;
+        position: relative;
+        top: -.05em;
     }
 }
 .indent-1 {margin-left: 1em}

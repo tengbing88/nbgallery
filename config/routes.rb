@@ -177,8 +177,10 @@ Rails.application.routes.draw do # rubocop: disable Metrics/BlockLength
     end
   end
 
-  get 'orgs' => 'orgs#index', path: 'orgs'
-  get 'orgs/:id' => 'orgs#show', path: 'org'
+  resources :orgs, only: %i[index show] do
+    member do
+    end
+  end
 
   # Other pages
   root 'static_pages#home'
