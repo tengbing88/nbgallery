@@ -1491,11 +1491,15 @@ span.deprecated-tag {
     display: inline-block;
 }
 #tagsDisplay,
-.tag-edit-mode,
-.org-stats {
+.tag-edit-mode {
     clear: both;
     display: block;
     height: 20px;
+}
+#tagsDisplay,
+.tag-edit-mode,
+.org-stats,
+p.org-stats-headline {
     & > a {
         color: inherit;
     }
@@ -3142,6 +3146,11 @@ body.page-admin-org_chart {
         position: relative;
         top: -.05em;
     }
+}
+.org-stats li span.users-metric,
+.org-stats li span.notebooks-metric {
+    top: -.05em;
+    margin: 0 .5em 0 -.2em;
 }
 .indent-1 {margin-left: 1em}
 .indent-2 {margin-left: 2em}

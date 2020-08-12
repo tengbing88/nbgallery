@@ -5,7 +5,7 @@ class OrgsController < ApplicationController
 
   # GET /orgs
   def index
-    
+
   end
 
   # GET /orgs/:name

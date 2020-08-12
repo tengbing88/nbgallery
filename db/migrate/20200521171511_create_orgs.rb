@@ -9,6 +9,7 @@ class CreateOrgs < ActiveRecord::Migration
       t.integer :notebook_runs
       t.integer :notebook_stars
       t.integer :notebook_shares
+      t.integer :downloads
 
       t.timestamps null: false
     end

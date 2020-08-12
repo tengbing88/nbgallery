@@ -1,102 +1,186 @@
+-Org.where.not(parent_id: nil).each do |org|
+  -users_count = 0; notebooks_count = 0; groups_count = 0; views = 0; runs = 0; stars = 0; share_count = 0; downloads = 0;
+  -users = User.where(org: org.name)
+  -users_count = users.count
+  -users.each do |user|
+    -notebooks = Notebook.where(owner_type: "User", owner_id: user.id)
+    -notebooks_count += notebooks.count
+    -notebooks.each do |notebook|
+      -views += NotebookSummary.find(notebook.id).unique_views
+      -runs += NotebookSummary.find(notebook.id).unique_runs
+      -stars += NotebookSummary.find(notebook.id).stars
+      -#share_count += Share.where(notebook_id: notebook.id).count
+      -downloads += NotebookSummary.find(notebook.id).unique_downloads
+    -groups = GroupMembership.where(user_id: user.id, owner: 1)
+    -groups_count = groups.count
+    -groups.each do |group|
+      -notebooks = Notebook.where(owner_type: "Group", owner_id: group.id)
+      -notebooks_count += notebooks.count
+      -notebooks.each do |notebook|
+        -views += NotebookSummary.find(notebook.id).unique_views
+        -runs += NotebookSummary.find(notebook.id).unique_runs
+        -stars += NotebookSummary.find(notebook.id).stars
+        -#share_count += Share.where(notebook_id: notebook.id).count
+        -downloads += NotebookSummary.find(notebook.id).unique_downloads
+  -org.users = users_count
+  -org.notebooks = notebooks_count
+  -org.notebook_views = views
+  -org.notebook_runs = runs
+  -org.notebook_stars = stars
+  -org.notebook_shares = share_count
+  -org.save!
+-parented_orgs = Org.where.not(parent_id: nil)
+-all_org = Org.where(parent_id: nil).first
+-all_org.users = parented_orgs.sum(:users)
+-all_org.notebooks = parented_orgs.sum(:notebooks)
+-all_org.notebook_views = parented_orgs.sum(:notebook_views)
+-all_org.notebook_runs = parented_orgs.sum(:notebook_runs)
+-all_org.notebook_stars = parented_orgs.sum(:notebook_stars)
+-all_org.notebook_shares = parented_orgs.sum(:notebook_shares)
+-all_org.save!
+
 -no_orgs = false
 -if (Org.count == 2 && Org.last.name == "Unknown") || (Org.count < 2)
   no_orgs = true
 div.content-container
   h1.center All Orgs
-  div.org-stats.flex
-    div.org-stats-by-org
-      h2 Top Orgs
-      -if no_orgs
-        strong No orgs found
-      -else
-        ol
-          -# Sort (but too lazy to do it now)
-          -top_orgs = Org.where.not(parent_id: nil).limit(5)
-          -top_orgs.each do |org|
-              li
-                a href="#{org_path(org)}" #{org.name}
-                -unless FALSE
-                  span.tooltips title="This notebook has been starred #{"2"} times"
-                    span.glyphicon.glyphicon-star-empty.action-icon.view-summary
-                    span.sr-only
-                      ' Stars
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively has been viewed #{"100"} unique times"
-                    span.glyphicon.glyphicon-eye-open.action-icon.view-summary
-                    span.sr-only
-                      ' Views
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively have been run #{"10"} unique times"
-                    span.glyphicon.glyphicon-play-circle.action-icon.view-summary
-                    span.sr-only
-                      ' Runs
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively have been downloaded #{"5"} unique times"
-                    span.glyphicon.glyphicon-download-alt.action-icon.view-summary
-                    span.sr-only
-                      ' Downloads
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-    div.org-stats-by-user
-      h2 Top Users
-      -if no_orgs
-        strong No orgs found
-      -else
-        ol
-          -# Sort (but too lazy to do it now)
-          -top_users = User.all.limit(5)
-          -top_users.each do |user|
-              li.org-top-user
-                i.fa.fa-user aria-hidden="true"
-                a href="#{user_path(user)}" #{user.name}
-                -unless FALSE
-                  span.tooltips title="This notebook has been starred #{"2"} times"
-                    span.glyphicon.glyphicon-star-empty.action-icon.view-summary
-                    span.sr-only
-                      ' Stars
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively has been viewed #{"100"} unique times"
-                    span.glyphicon.glyphicon-eye-open.action-icon.view-summary
-                    span.sr-only
-                      ' Views
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively have been run #{"10"} unique times"
-                    span.glyphicon.glyphicon-play-circle.action-icon.view-summary
-                    span.sr-only
-                      ' Runs
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                -unless FALSE
-                  span.tooltips title="This org's notebooks collectively have been downloaded #{"5"} unique times"
-                    span.glyphicon.glyphicon-download-alt.action-icon.view-summary
-                    span.sr-only
-                      ' Downloads
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify 10
-                    span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
+  p.org-stats-headline.center
+    strong Covers:
+    |  (#{all_org.notebooks} Notebooks) (#{all_org.users} Users)
+    -if all_org.notebook_stars > 0
+      span.tooltips title="All orgs' notebooks collectively have been starred #{all_org.notebook_stars} unique times"
+        span.glyphicon.glyphicon-star-empty.action-icon.view-summary
+        span.sr-only
+          ' Stars
+        span.hidden aria-hidden="true" #{"("}
+        span.badge.badge-notify #{all_org.notebook_stars}
+        span.hidden aria-hidden="true" #{")"}
+    -if all_org.notebook_views > 0
+      span.tooltips title="All orgs' notebooks collectively have been viewed #{all_org.notebook_views} unique times"
+        span.glyphicon.glyphicon-eye-open.action-icon.view-summary
+        span.sr-only
+          ' Views
+        span.hidden aria-hidden="true" #{"("}
+        span.badge.badge-notify #{all_org.notebook_views}
+        span.hidden aria-hidden="true" #{")"}
+    -if all_org.notebook_runs > 0
+      span.tooltips title="All orgs' notebooks collectively have been run #{all_org.notebook_runs} unique times"
+        span.glyphicon.glyphicon-play-circle.action-icon.view-summary
+        span.sr-only
+          ' Runs
+        span.hidden aria-hidden="true" #{"("}
+        span.badge.badge-notify #{all_org.notebook_runs}
+        span.hidden aria-hidden="true" #{")"}
+    -unless TRUE
+      span.tooltips title="All orgs' notebooks collectively have been downloaded #{all_org.notebook_downloads} unique times"
+        span.glyphicon.glyphicon-download-alt.action-icon.view-summary
+        span.sr-only
+          ' Downloads
+        span.hidden aria-hidden="true" #{"("}
+        span.badge.badge-notify #{all_org.notebook_downloads}
+        span.hidden aria-hidden="true" #{")"}
   div
+    div.org-stats.flex
+      div.org-stats-by-org
+        h2 Top Orgs
+        -if no_orgs
+          strong No orgs found
+        -else
+          ol
+            -top_orgs = Org.where.not(parent_id: nil).order(:notebook_runs).reverse_order
+            -top_orgs.first(5).each do |org|
+              -if org.notebook_views > 0
+                li
+                  a href="#{org_path(org)}" #{org.name}
+                  span.notebooks-metric
+                    span aria-hidden="true" #{"("}
+                    span #{org.notebooks} notebooks
+                    span aria-hidden="true" #{")"}
+                  span.users-metric
+                    span aria-hidden="true" #{"("}
+                    span #{org.users} users
+                    span aria-hidden="true" #{")"}
+                  -unless org.notebook_stars < 1
+                    span.tooltips title="This org's notebooks collectively have been starred #{org.notebook_stars} times"
+                      span.glyphicon.glyphicon-star-empty.action-icon.view-summary
+                      span.sr-only
+                        ' Stars
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify #{org.notebook_stars}
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+                  span.tooltips title="This org's notebooks collectively has been viewed #{org.notebook_views} unique times"
+                    span.glyphicon.glyphicon-eye-open.action-icon.view-summary
+                    span.sr-only
+                      ' Views
+                    span.hidden aria-hidden="true" #{"("}
+                    span.badge.badge-notify #{org.notebook_views}
+                    span.hidden aria-hidden="true" #{")"}
+                  span.hidden aria-hidden="true" #{" | "}
+                  -unless org.notebook_runs < 1
+                    span.tooltips title="This org's notebooks collectively have been run #{org.notebook_runs} unique times"
+                      span.glyphicon.glyphicon-play-circle.action-icon.view-summary
+                      span.sr-only
+                        ' Runs
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify #{org.notebook_runs}
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+                  -unless TRUE
+                    span.tooltips title="This org's notebooks collectively have been downloaded #{org.notebook_downloads} unique times"
+                      span.glyphicon.glyphicon-download-alt.action-icon.view-summary
+                      span.sr-only
+                        ' Downloads
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify #{org.notebook_downloads}
+                      span.hidden aria-hidden="true" #{")"}
+      div.org-stats-by-user
+        h2 Top Users
+        -if no_orgs
+          strong No orgs found
+        -else
+          ol
+            -# Sort (but too lazy to do it now)
+            -top_users = User.all.limit(5)
+            -top_users.each do |user|
+                li.org-top-user
+                  i.fa.fa-user aria-hidden="true"
+                  a href="#{user_path(user)}" #{user.name}
+                  -unless FALSE
+                    span.tooltips title="This notebook has been starred #{"2"} times"
+                      span.glyphicon.glyphicon-star-empty.action-icon.view-summary
+                      span.sr-only
+                        ' Stars
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify 10
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+                  -unless FALSE
+                    span.tooltips title="This org's notebooks collectively has been viewed #{"100"} unique times"
+                      span.glyphicon.glyphicon-eye-open.action-icon.view-summary
+                      span.sr-only
+                        ' Views
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify 10
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+                  -unless FALSE
+                    span.tooltips title="This org's notebooks collectively have been run #{"10"} unique times"
+                      span.glyphicon.glyphicon-play-circle.action-icon.view-summary
+                      span.sr-only
+                        ' Runs
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify 10
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+                  -unless FALSE
+                    span.tooltips title="This org's notebooks collectively have been downloaded #{"5"} unique times"
+                      span.glyphicon.glyphicon-download-alt.action-icon.view-summary
+                      span.sr-only
+                        ' Downloads
+                      span.hidden aria-hidden="true" #{"("}
+                      span.badge.badge-notify 10
+                      span.hidden aria-hidden="true" #{")"}
+                    span.hidden aria-hidden="true" #{" | "}
+  div
+    p test

@@ -116,6 +116,40 @@ module ScheduledJobs
       log('COMPUTE: finished nightly computation')
     end
 
+    def org_computations
+      log('COMPUTE: beginning org computations')
+      #Org.where.not(parent_id: nil).each do |org|
+        #users_count = 0; notebooks_count = 0; groups_count = 0; views = 0; runs = 0; stars = 0; shares = 0; downloads = 0;
+        #users = User.where(org: org.name)
+        #users_count = users.count
+        #users.each do |user|
+          #notebooks = Notebook.where(owner_type: "User", owner_id: user.id)
+          #notebooks_count += notebooks.count
+          #notebooks.each do |notebook|
+            #views += NotebookSummary.find(notebook.id).unique_views
+            #runs += NotebookSummary.find(notebook.id).unique_runs
+            #stars += Star.where(notebook_id: notebook.id).count
+            #shares += Share.where(notebook_id: notebook.id).count
+            #downloads += NotebookSummary.find(notebook.id).unique_downloads
+          #end
+          #groups = GroupsMembership.where(user_id: user.id, owner: 1)
+          #groups_count = groups.count
+          #groups.each do |group|
+            #notebooks = Notebook.where(owner_type: "Group", owner_id: group.id)
+            #notebooks_count += notebooks.count
+            #notebooks.each do |notebook|
+              #views += NotebookSummary.find(notebook.id).unique_views
+              #runs += NotebookSummary.find(notebook.id).unique_runs
+              #stars += Star.where(notebook_id: notebook.id).count
+              #shares += Share.where(notebook_id: notebook.id).count
+              #downloads += NotebookSummary.find(notebook.id).unique_downloads
+            #end
+          #end
+        #end
+      #end
+      log('COMPUTE: finished org computations')
+    end
+
     def notebook_dailies
       NotebookDaily.age_off
       NotebookDaily.compute_all

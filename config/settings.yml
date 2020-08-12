@@ -50,6 +50,7 @@ cron:
   notebook_summaries: 0 1 * * * UTC # 0100am daily
   daily_subscription_email: 0 8 * * 1-5 UTC # 0800am Monday-Friday
   nightly_computation: 0 4 * * * UTC # 0400am daily
+  org_computations: 0 2 * * * UTC # 0200am daily
 
 # Notebook review options
 reviews:

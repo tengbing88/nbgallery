@@ -28,6 +28,11 @@ cron GalleryConfig.cron.daily_subscription_email do
     ScheduledJobs.run(:daily_subscription_email)
 end
 
+# Org Computations
+cron GalleryConfig.cron.org_computations do
+    ScheduledJobs.run(:org_computations)
+end
+
 # Notebook suggestions
 if Rails.env.production?
   cron GalleryConfig.cron.nightly_computation do
