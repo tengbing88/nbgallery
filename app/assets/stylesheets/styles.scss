@@ -3130,6 +3130,10 @@ body.page-admin-org_chart {
     }
 }
 .org-stats {
+    margin-top: 3%;
+    h2 {
+        margin-top : 0;
+    }
     li a {
         font-size: 150%;
         margin-right: .5em;
@@ -3151,6 +3155,28 @@ body.page-admin-org_chart {
 .org-stats li span.notebooks-metric {
     top: -.05em;
     margin: 0 .5em 0 -.2em;
+}
+.org-stats,
+.org-stats-headline {
+    span.fa.fa-book,
+    span.fa.fa-user,
+    span.fa.fa-users {
+        font-size: 19px;
+        position: relative;
+        top: -.1em;
+    }
+    span.fa.fa-users {
+        font-size: 18px;
+        margin-left: .15em;
+        top: -.15em;
+    }
+}
+.carousel-caption .org-stats-headline {
+    display: inline-block;
+    span.action-icon,
+    span.badge {
+      color: #fff;
+    }
 }
 .indent-1 {margin-left: 1em}
 .indent-2 {margin-left: 2em}

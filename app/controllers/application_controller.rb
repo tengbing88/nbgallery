@@ -271,7 +271,7 @@ class ApplicationController < ActionController::Base
         if url_check[2] == nil
           title = "All Orgs"
         else
-          title = "Org \"#{@group.name}\""
+          title = "Org \"#{@org.name}\""
         end
       elsif url_check[1] == "users"
         if url_check[2] == nil
