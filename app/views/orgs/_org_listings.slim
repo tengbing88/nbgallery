@@ -1,0 +1,13 @@
+div
+  table id="orgTable" role="presentation"
+    caption.sr-only Org Listings
+    thead.sr-only
+      tr
+        th style="text-align:center" Org
+    tbody
+      -@orgs.each do |org|
+        tr
+          td
+            div
+              hr.hidden aria-hidden="true"
+              a.title href="#{org_path(org)}" #{org.name}

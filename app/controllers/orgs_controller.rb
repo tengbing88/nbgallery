@@ -5,13 +5,15 @@ class OrgsController < ApplicationController
 
   # GET /orgs
   def index
-    # @orgs = Org.where.not(parent_id: nil)
     @org = Org.find_by(parent_id: nil)
+    @orgs = Org.where(parent_id: @org.id)
+    @all_sub_orgs = Org.where.not(parent_id: nil)
   end
 
   # GET /orgs/:name
   def show
     @org = Org.find_by(id: params[:id])
+    @orgs = Org.where(parent_id: @org.id)
   end
 
   # PATCH /admin/org_chart/add

@@ -33,12 +33,33 @@
   -org.notebook_shares = share_count
   -org.notebook_downloads = downloads
   -org.save!
-  -# Add values to parent element if not the All Orgs
-  -# above_org = Org.find(org.parent_id)
-  -# while above_org.parent_id != nil
-  -# FINISH
+
+// get array of all ids of direct children of ALL
+// for each direct child of ALL, calculate sums
+// while org is at an endpoint (no org exists with parent_id equal to its id)
+// for each child of array, find all subchildren and sum the things, setting array equal to that new level of elements.
+-parents = Org.where(parent_id: @org.id)
+
+
+
+-# Add values to parent element if not the All Orgs
+-# Won't work this way because rows could be manually uploaded out of order or edited with parents at the bottom/old ends
+-#parent_org = Org.find(org.parent_id)
+-#while parent_org.parent_id != nil
+-#parent_org.score += (org.notebook_runs * 10) + org.notebook_views
+-#parent_org.users += org.users
+-#parent_org.notebooks += org.notebooks
+-#parent_org.groups += org.groups
+-#parent_org.notebook_views += org.notebook_views
+-#parent_org.notebook_runs += org.notebook_runs
+-#parent_org.notebook_stars += org.notebook_stars
+-#parent_org.notebook_shares += org.notebook_shares
+-#parent_org.notebook_downloads += org.notebook_downloads
+-#org = parent_org
+-#parent_org = Org.find(parent_org.parent_id)
+
+
 -parented_orgs = Org.where.not(parent_id: nil)
--#all_org = Org.where(parent_id: nil).first
 -@org.users = parented_orgs.sum(:users)
 -@org.notebooks = parented_orgs.sum(:notebooks)
 -@org.groups = parented_orgs.sum(:groups)
@@ -185,14 +206,4 @@ div.content-container
                       span.badge.badge-notify 10
                       span.hidden aria-hidden="true" #{")"}
                     span.hidden aria-hidden="true" #{" | "}
-  div
-    table id="orgTable" role="presentation"
-      caption.sr-only Org Listings
-      thead.sr-only
-        tr
-          th style="text-align:center" Org
-      tbody
-        tr
-          td
-            div
-              hr.hidden aria-hidden="true"
+  ==render partial: "org_listings"
