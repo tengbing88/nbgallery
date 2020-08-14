@@ -6,6 +6,7 @@ class OrgsController < ApplicationController
   # GET /orgs
   def index
     # @orgs = Org.where.not(parent_id: nil)
+    @org = Org.find_by(parent_id: nil)
   end
 
   # GET /orgs/:name

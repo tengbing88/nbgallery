@@ -164,6 +164,10 @@ html lang="en"
                                 span.tab #{GalleryConfig.site.name} Preferences
                             li.divider
                             li.dropdown-header.filter-item My Resources
+                            -if Org.where(name: @user.org).exists
+                              li
+                                a href="#{org_path(Org.find_by(name: @user.org))}"
+                                  span.tab.no-wrap.entry My Org
                             -unless @user.notebooks.count.zero?
                               li
                                 a href="#{user_path(@user)}"

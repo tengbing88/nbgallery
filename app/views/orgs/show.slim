@@ -3,6 +3,7 @@
 -top_orgs = Org.where(parent_id: @org.id).order(:score).reverse_order
 -if (Org.count == 2 && Org.last.name == "Unknown" && top_orgs.count > 0) || top_orgs.count < 1
   -no_orgs = true
+==render partial: "org_hierarchy"
 div.content-container.mobile-expanding
   div.carousel-inner
     div.item.active
@@ -12,14 +13,13 @@ div.content-container.mobile-expanding
           h1 class=(@org.name.length > 30? "long-title" : "")
             span #{@org.name}
           ==render partial: "org_headline"
-/* h1.center #{@org.name} */
 div.content-container
   div
     div.org-stats.flex
       div.org-stats-by-org
         h2 Top Orgs
         -if no_orgs
-          strong No orgs found
+          strong No sub-orgs found
         -else
           ol
             -top_orgs.first(5).each do |org|

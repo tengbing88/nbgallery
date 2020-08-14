@@ -33,25 +33,36 @@
   -org.notebook_shares = share_count
   -org.notebook_downloads = downloads
   -org.save!
+  -# Add values to parent element if not the All Orgs
+  -# above_org = Org.find(org.parent_id)
+  -# while above_org.parent_id != nil
+  -# FINISH
 -parented_orgs = Org.where.not(parent_id: nil)
--all_org = Org.where(parent_id: nil).first
--all_org.users = parented_orgs.sum(:users)
--all_org.notebooks = parented_orgs.sum(:notebooks)
--all_org.groups = parented_orgs.sum(:groups)
--all_org.notebook_views = parented_orgs.sum(:notebook_views)
--all_org.notebook_runs = parented_orgs.sum(:notebook_runs)
--all_org.notebook_stars = parented_orgs.sum(:notebook_stars)
--all_org.notebook_shares = parented_orgs.sum(:notebook_shares)
--all_org.notebook_downloads = parented_orgs.sum(:notebook_downloads)
--all_org.save!
+-#all_org = Org.where(parent_id: nil).first
+-@org.users = parented_orgs.sum(:users)
+-@org.notebooks = parented_orgs.sum(:notebooks)
+-@org.groups = parented_orgs.sum(:groups)
+-@org.notebook_views = parented_orgs.sum(:notebook_views)
+-@org.notebook_runs = parented_orgs.sum(:notebook_runs)
+-@org.notebook_stars = parented_orgs.sum(:notebook_stars)
+-@org.notebook_shares = parented_orgs.sum(:notebook_shares)
+-@org.notebook_downloads = parented_orgs.sum(:notebook_downloads)
+-@org.save!
 
 -no_orgs = false
 -top_orgs = Org.where.not(parent_id: nil).order(:score).reverse_order
 -if (Org.count == 2 && Org.last.name == "Unknown") || top_orgs.count < 1
   -no_orgs = true
+div.content-container.mobile-expanding
+  div.carousel-inner
+    div.item.active
+      ==image_tag("nbgallery_banner.png", aria: {"hidden": true}, class:"show", style:"display: none")
+      div.content-container
+        div.carousel-caption
+          h1
+            span All Orgs
+          ==render partial: "org_headline"
 div.content-container
-  h1.center All Orgs
-  ==render partial: "org_headline"
   div
     div.org-stats.flex
       div.org-stats-by-org
@@ -185,4 +196,3 @@ div.content-container
           td
             div
               hr.hidden aria-hidden="true"
-              

@@ -1,0 +1,19 @@
+-org_order = []
+-org = @org
+-while org.parent_id != nil
+  -org_order.unshift(org.id)
+  -org = Org.find(org.parent_id)
+div.content-container
+  span.sr-only Org hierarchy
+  ol.org-hierarchy
+    li
+      a href="#{orgs_path}" All
+    -org_order.each do |org_id|
+      span.fa.fa-chevron-right aria-hidden="true"
+      -org = Org.find(org_id)
+      -if org.id != @org.id && org.parent_id != nil
+        li
+          a href="#{org_path(org)}" #{org.name}
+      -else
+        li
+          span #{org.name}

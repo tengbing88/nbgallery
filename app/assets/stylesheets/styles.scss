@@ -3178,6 +3178,19 @@ body.page-admin-org_chart {
       color: #fff;
     }
 }
+ol.org-hierarchy {
+    display: inline-block;
+    list-style: none;
+    padding-left: .5em;
+    li {
+        display: inline-block;
+        font-size: 120%;
+        margin-right: .5em;
+    }
+    span.fa {
+        margin-right: .5em;
+    }
+}
 .indent-1 {margin-left: 1em}
 .indent-2 {margin-left: 2em}
 .indent-3 {margin-left: 3em}
@@ -3345,11 +3358,16 @@ body.dark-theme {
         .nav-bar-icon,
         .nav-bar-icon:before,
         .nav-bar-icon:after {
-          background-color: $secondary-link-color;
+            background-color: $secondary-color;
         }
     }
     table tbody tr:nth-child(odd),
-    table tbody tr:nth-child(even) {
+    table tbody tr:nth-child(even),
+    .nb-table tr:nth-child(even),
+    .dropdown-menu,
+    .nav-bar-icon-container .nav-bar-icon,
+    .nav-bar-icon-container .nav-bar-icon:after,
+    .nav-bar-icon-container .nav-bar-icon:before {
         background: $secondary-background;
     }
     table th {
@@ -3362,10 +3380,6 @@ body.dark-theme {
     table.dataTable thead th.sorting {
         background: #bbb !important;
     }
-    .nb-table tr:nth-child(even),
-    .dropdown-menu {
-        background: $secondary-background;
-    }
     .dropdown-menu > li > a:hover,
     .dropdown-menu > li > a:focus {
         background: #c3c3c3;
@@ -3376,9 +3390,13 @@ body.dark-theme {
         background: $intermediate-icon-color;
     }
     .nb-table tr:nth-child(odd),
-    #searchTable th,
-    #notebookJumbo.info {
+    #searchTable th {
         background: #111;
+    }
+    #notebookJumbo.info {
+        @media all and (min-width: 601px) {
+            background: #111;
+        }
     }
     .nb-table tr:nth-child(odd),
     .nb-table tr:nth-child(even) {
@@ -3416,6 +3434,12 @@ body.dark-theme {
         strong {
             color: $secondary-background;
         }
+    }
+    .org-list-container {
+        color: #eee;
+    }
+    &.page-admin-org_chart label p {
+        color: #eee;
     }
 }
 
@@ -3494,7 +3518,9 @@ body.ultra-dark-theme {
     .super-container,
     &.path-video video,
     #navbarSearchBar .info-button,
-    #expandableSearchDropdown {
+    #expandableSearchDropdown,
+    .error,
+    .edit-icon {
         filter: invert(100%);
     }
     &.page-users-id .carousel-inner .author-rep,
