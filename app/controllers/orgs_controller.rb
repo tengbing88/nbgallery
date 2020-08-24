@@ -2,6 +2,7 @@
 class OrgsController < ApplicationController
   before_action :verify_admin
   skip_before_filter :verify_authenticity_token
+  @children = Array.new
 
   # GET /orgs
   def index
@@ -253,5 +254,46 @@ class OrgsController < ApplicationController
       redirect_to(:back)
     end
   end
+
+  def calculate_org_sums
+    Org.where.not(parent_id: nil).each do |org|
+      org_id_array = [org.id]
+      ids = grab_children(org_id_array)
+      uniq_ids = ids.flatten.reject(&:blank?).uniq
+      all_org_children = Org.find(id: JSON.parse(uniq_ids))
+      # With the children, caclulate for each
+      org.users = all_org_children.sum(:users)
+      org.notebooks = all_org_children.sum(:notebooks)
+      org.groups = all_org_children.sum(:groups)
+      org.notebook_views = all_org_children.sum(:notebook_views)
+      org.notebook_runs = all_org_children.sum(:notebook_runs)
+      org.notebook_stars = all_org_children.sum(:notebook_stars)
+      org.notebook_shares = all_org_children.sum(:notebook_shares)
+      org.notebook_downloads = all_org_children.sum(:notebook_downloads)
+      org.save!
+    end
+  end
+
+  def test
+    return grab_children([8])
+  end
+
+  def grab_children(org_id_array)
+    org_id_array.each do |child_id|
+      if !Org.where(parent_id: child_id).exists?
+        @children.push(child_id)
+        org_id_array.pop(child_id)
+        return nil
+      else
+        @children.push(child_id)
+        org_id_array.pop(child_id)
+        org_id_array.push(Org.where(parent_id: child_id).pluck(:id))
+        grab_children(org_id_array)
+      end
+    end
+  end
+
+  helper_method :test
+  helper_method :calculate_org_sums
 
 end

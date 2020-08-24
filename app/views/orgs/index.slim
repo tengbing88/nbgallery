@@ -33,13 +33,27 @@
   -org.notebook_shares = share_count
   -org.notebook_downloads = downloads
   -org.save!
+  -#calculate_org_sums()
 
 // get array of all ids of direct children of ALL
 // for each direct child of ALL, calculate sums
 // while org is at an endpoint (no org exists with parent_id equal to its id)
 // for each child of array, find all subchildren and sum the things, setting array equal to that new level of elements.
--parents = Org.where(parent_id: @org.id)
+//-parents = Org.where(parent_id: @org.id)
 
+
+
+
+
+
+// !!!!!For each org, traverse through their hierarchy and add totals.
+//-parents = Org.where(parent_id: @org.id)
+//-parents.each do |org|
+//  -has_children = TRUE
+//  -while has_children do
+//    -if Org.where(parent_id: org.id).exists?
+//      has_children = FALSE
+//    -else
 
 
 -# Add values to parent element if not the All Orgs

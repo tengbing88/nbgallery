@@ -1498,6 +1498,7 @@ span.deprecated-tag {
 }
 #tagsDisplay,
 .tag-edit-mode,
+#orgTable,
 .org-stats,
 p.org-stats-headline {
     & > a {
@@ -2128,10 +2129,18 @@ body.page-groups #main .dropdownGroup {
     position: relative;
     top: -3.1em;
 }
-body.page-groups-id #groupToggle {
+body.page-groups-id #groupToggle,
+body.directory-orgs #viewToggle,
+body.page-orgs #viewToggle {
     color: #ff782a;
+    font-size: 21px;
     font-weight: $bold-weight;
     outline: none;
+}
+body.directory-orgs #viewToggle,
+body.page-orgs #viewToggle {
+    position: relative;
+    top: -.15em;
 }
 body.page-groups-id a.landing-page-link.delete-icon {
     font-size: 60%;
@@ -3130,7 +3139,6 @@ body.page-admin-org_chart {
     }
 }
 .org-stats {
-    margin-top: 3%;
     h2 {
         margin-top : 0;
     }
@@ -3150,6 +3158,32 @@ body.page-admin-org_chart {
         position: relative;
         top: -.05em;
     }
+}
+body.directory-orgs h2,
+body.page-orgs h2 {
+    margin-top: 1em;
+}
+#orgTable {
+    .title {
+        font-size: 150%;
+        margin-right: .5em;
+    }
+    .sub-org-listing {
+        margin-bottom: 0;
+        padding: 0 40px;
+    }
+    .sub-org-listing li {
+        border: 1px dotted #ccc;
+        flex: 0 0 7em;
+        list-style: none;
+        margin: .5em;
+        padding: .5em;
+        text-align: center;
+    }
+}
+.sub-org-count {
+    display: inline;
+    font-size: 150%;
 }
 .org-stats li span.users-metric,
 .org-stats li span.notebooks-metric {

@@ -61,3 +61,9 @@ p.org-stats-headline.center
       span.hidden aria-hidden="true" #{"("}
       span.badge.badge-notify #{@org.notebook_downloads}
       span.hidden aria-hidden="true" #{")"}
+  -if @org.notebooks > 0
+    span #{" "}
+    a.nounderline.tooltips.tooltipstered href="#" id="viewToggle" aria-label="Toggle what content below is displayed" title="Toggle display below"
+      span aria-hidden="true" [
+      span.text view notebooks
+      span aria-hidden="true" ]

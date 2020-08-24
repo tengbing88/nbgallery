@@ -1,13 +1,85 @@
 div
-  table id="orgTable" role="presentation"
-    caption.sr-only Org Listings
-    thead.sr-only
-      tr
-        th style="text-align:center" Org
-    tbody
-      -@orgs.each do |org|
+  -if @orgs.exists?
+    h2
+      | Sub Orgs (
+      ==@orgs.count
+      | )
+    table id="orgTable" role="presentation"
+      caption.sr-only Org Listings
+      thead.sr-only
         tr
-          td
-            div
-              hr.hidden aria-hidden="true"
-              a.title href="#{org_path(org)}" #{org.name}
+          th style="text-align:center" Org
+      tbody
+        -@orgs.each do |org|
+          tr
+            td
+              div
+                hr.hidden aria-hidden="true"
+                a.title href="#{org_path(org)}" #{org.name}
+                span.hidden aria-hidden="true" #{" | "}
+                span.tooltips title="Contains #{org.notebooks} notebooks"
+                  span.fa.fa-book.action-icon.view-summary
+                  span.sr-only
+                    ' Notebooks
+                  span.hidden aria-hidden="true" #{"("}
+                  span.badge.badge-notify #{org.notebooks}
+                  span.hidden aria-hidden="true" #{")"}
+                span.hidden aria-hidden="true" #{" | "}
+                span.tooltips title="Contains #{org.users} users"
+                  span.fa.fa-user.action-icon.view-summary
+                  span.sr-only
+                    ' Users
+                  span.hidden aria-hidden="true" #{"("}
+                  span.badge.badge-notify #{org.users}
+                  span.hidden aria-hidden="true" #{")"}
+                -if org.groups > 0
+                  span.hidden aria-hidden="true" #{" | "}
+                  span.tooltips title="Contains #{org.groups} group where org' users have full or split ownership"
+                    span.fa.fa-users.action-icon.view-summary
+                    span.sr-only
+                      ' Groups
+                    span.hidden aria-hidden="true" #{"("}
+                    span.badge.badge-notify #{org.groups}
+                    span.hidden aria-hidden="true" #{")"}
+                -if org.notebook_stars > 0
+                  span.hidden aria-hidden="true" #{" | "}
+                  span.tooltips title="This org's notebooks collectively have been starred #{org.notebook_stars} times"
+                    span.glyphicon.glyphicon-star-empty.action-icon.view-summary
+                    span.sr-only
+                      ' Stars
+                    span.hidden aria-hidden="true" #{"("}
+                    span.badge.badge-notify #{org.notebook_stars}
+                    span.hidden aria-hidden="true" #{")"}
+                span.hidden aria-hidden="true" #{" | "}
+                span.tooltips title="This org's notebooks collectively has been viewed #{org.notebook_views} unique times"
+                  span.glyphicon.glyphicon-eye-open.action-icon.view-summary
+                  span.sr-only
+                    ' Views
+                  span.hidden aria-hidden="true" #{"("}
+                  span.badge.badge-notify #{org.notebook_views}
+                  span.hidden aria-hidden="true" #{")"}
+                -if org.notebook_runs > 0
+                  span.hidden aria-hidden="true" #{" | "}
+                  span.tooltips title="This org's notebooks collectively have been run #{org.notebook_runs} unique times"
+                    span.glyphicon.glyphicon-play-circle.action-icon.view-summary
+                    span.sr-only
+                      ' Runs
+                    span.hidden aria-hidden="true" #{"("}
+                    span.badge.badge-notify #{org.notebook_runs}
+                    span.hidden aria-hidden="true" #{")"}
+                -if org.notebook_downloads > 0
+                  span.hidden aria-hidden="true" #{" | "}
+                  span.tooltips title="This org's notebooks collectively have been downloaded by #{org.notebook_downloads} unique users"
+                    span.glyphicon.glyphicon-download-alt.action-icon.view-summary
+                    span.sr-only
+                      ' Downloads
+                    span.hidden aria-hidden="true" #{"("}
+                    span.badge.badge-notify #{org.notebook_downloads}
+                    span.hidden aria-hidden="true" #{")"}
+              -sub_org = Org.where(parent_id: org.id)
+              -if sub_org.exists?
+                span.sr-only Has sub orgs:
+                ul.sub-org-listing.flex
+                  -sub_org.each do |sub_org|
+                    li
+                      a.sub-org-title href="#{org_path(sub_org)}" #{sub_org.name}
