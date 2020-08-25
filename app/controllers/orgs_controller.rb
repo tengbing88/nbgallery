@@ -2,7 +2,9 @@
 class OrgsController < ApplicationController
   before_action :verify_admin
   skip_before_filter :verify_authenticity_token
-  @children = Array.new
+  @children = Array.new {[]}
+  tester = "test"
+
 
   # GET /orgs
   def index
@@ -275,17 +277,18 @@ class OrgsController < ApplicationController
   end
 
   def test
-    return grab_children([8])
+    #return grab_children([8])
+    return tester
   end
 
   def grab_children(org_id_array)
     org_id_array.each do |child_id|
       if !Org.where(parent_id: child_id).exists?
-        @children.push(child_id)
+        #@children.push(child_id)
         org_id_array.pop(child_id)
         return nil
       else
-        @children.push(child_id)
+        #@children.push(child_id)
         org_id_array.pop(child_id)
         org_id_array.push(Org.where(parent_id: child_id).pluck(:id))
         grab_children(org_id_array)
