@@ -1,67 +1,65 @@
--if @org == nil
-  -@org = Org.where(parent_id: nil).first
 p.org-stats-headline.center
-  span.tooltips title="Contains #{@org.notebooks} notebooks"
+  span.tooltips title="Contains #{@summed_org.notebooks} notebooks"
     span.fa.fa-book.action-icon.view-summary
     span.sr-only
       ' Notebooks
     span.hidden aria-hidden="true" #{"("}
-    span.badge.badge-notify #{@org.notebooks}
+    span.badge.badge-notify #{@summed_org.notebooks}
     span.hidden aria-hidden="true" #{")"}
-  span.tooltips title="Contains #{@org.users} users"
+  span.tooltips title="Contains #{@summed_org.users} users"
     span.hidden aria-hidden="true" #{" | "}
     span.fa.fa-user.action-icon.view-summary
     span.sr-only
       ' Users
     span.hidden aria-hidden="true" #{"("}
-    span.badge.badge-notify #{@org.users}
+    span.badge.badge-notify #{@summed_org.users}
     span.hidden aria-hidden="true" #{")"}
-  -if @org.groups > 0
+  -if @summed_org.groups > 0
     span.hidden aria-hidden="true" #{" | "}
-    span.tooltips title="Contains #{@org.groups} groups where org' users have full or split ownership"
+    span.tooltips title="Contains #{@summed_org.groups} groups where org' users have full or split ownership"
       span.fa.fa-users.action-icon.view-summary
       span.sr-only
         ' Groups
       span.hidden aria-hidden="true" #{"("}
-      span.badge.badge-notify #{@org.groups}
+      span.badge.badge-notify #{@summed_org.groups}
       span.hidden aria-hidden="true" #{")"}
-  -if @org.notebook_stars > 0
+  -if @summed_org.notebook_stars > 0
     span.hidden aria-hidden="true" #{" | "}
-    span.tooltips title="All orgs' notebooks collectively have been starred #{@org.notebook_stars} unique times"
+    span.tooltips title="All orgs' notebooks collectively have been starred #{@summed_org.notebook_stars} unique times"
       span.glyphicon.glyphicon-star-empty.action-icon.view-summary
       span.sr-only
         ' Stars
       span.hidden aria-hidden="true" #{"("}
-      span.badge.badge-notify #{@org.notebook_stars}
+      span.badge.badge-notify #{@summed_org.notebook_stars}
       span.hidden aria-hidden="true" #{")"}
-  -if @org.notebook_views > 0
+  -if @summed_org.notebook_views > 0
     span.hidden aria-hidden="true" #{" | "}
-    span.tooltips title="All orgs' notebooks collectively have been viewed #{@org.notebook_views} unique times"
+    span.tooltips title="All orgs' notebooks collectively have been viewed #{@summed_org.notebook_views} unique times"
       span.glyphicon.glyphicon-eye-open.action-icon.view-summary
       span.sr-only
         ' Views
       span.hidden aria-hidden="true" #{"("}
-      span.badge.badge-notify #{@org.notebook_views}
+      span.badge.badge-notify #{@summed_org.notebook_views}
       span.hidden aria-hidden="true" #{")"}
-  -if @org.notebook_runs > 0
+  -if @summed_org.notebook_runs > 0
     span.hidden aria-hidden="true" #{" | "}
-    span.tooltips title="All orgs' notebooks collectively have been run #{@org.notebook_runs} unique times"
+    span.tooltips title="All orgs' notebooks collectively have been run #{@summed_org.notebook_runs} unique times"
       span.glyphicon.glyphicon-play-circle.action-icon.view-summary
       span.sr-only
         ' Runs
       span.hidden aria-hidden="true" #{"("}
-      span.badge.badge-notify #{@org.notebook_runs}
+      span.badge.badge-notify #{@summed_org.notebook_runs}
       span.hidden aria-hidden="true" #{")"}
-  -if @org.notebook_downloads > 0
+  -if @summed_org.notebook_downloads > 0
     span.hidden aria-hidden="true" #{" | "}
-    span.tooltips title="All orgs' notebooks collectively have been downloaded by #{@org.notebook_downloads} unique users"
+    span.tooltips title="All orgs' notebooks collectively have been downloaded by #{@summed_org.notebook_downloads} unique users"
       span.glyphicon.glyphicon-download-alt.action-icon.view-summary
       span.sr-only
         ' Downloads
       span.hidden aria-hidden="true" #{"("}
-      span.badge.badge-notify #{@org.notebook_downloads}
+      span.badge.badge-notify #{@summed_org.notebook_downloads}
       span.hidden aria-hidden="true" #{")"}
-  -if @org.notebooks > 0
+  -if @summed_org.notebooks > 0
     span #{" "}
     a.nounderline.tooltips.tooltipstered href="#" id="viewToggle" aria-label="Toggle what content below is displayed" title="Toggle display below"
       span aria-hidden="true" [

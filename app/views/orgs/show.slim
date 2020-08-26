@@ -1,6 +1,6 @@
--less_noise = TRUE
 -no_orgs = false
--top_orgs = Org.where(parent_id: @org.id).order(:score).reverse_order
+-top_orgs = @all_summed_suborgs.order(:score).reverse_order
+-#top_orgs = Org.where(parent_id: @org.id).order(:score).reverse_order
 -if (Org.count == 2 && Org.last.name == "Unknown" && top_orgs.count > 0) || top_orgs.count < 1
   -no_orgs = true
 ==render partial: "org_hierarchy"
@@ -13,7 +13,7 @@ div.content-container.mobile-expanding
           h1 class=(@org.name.length > 30? "long-title" : "")
             span #{@org.name}
           ==render partial: "org_headline"
-div.content-container
+div.content-container id="landingPage"
   div
     div.org-stats.flex
       div.org-stats-by-org
@@ -25,8 +25,8 @@ div.content-container
             -top_orgs.first(5).each do |org|
               -if org.notebook_views > 0
                 li
-                  a href="#{org_path(org)}" #{org.name}
-                  -if !less_noise
+                  a href="#{org_path(Org.find(org.type_id))}" #{Org.find(org.type_id).name}
+                  -if !@less_noise
                     span.hidden aria-hidden="true" #{" | "}
                     span.tooltips title="Contains #{org.notebooks} notebooks"
                       span.fa.fa-book.action-icon.view-summary
@@ -87,57 +87,23 @@ div.content-container
                       span.hidden aria-hidden="true" #{"("}
                       span.badge.badge-notify #{org.notebook_downloads}
                       span.hidden aria-hidden="true" #{")"}
-      div.org-stats-by-user
-        h2 Top Users
-        -if FALSE && no_orgs
-          -strong No orgs found
+      ==render partial: "top_users"
+      div
+        h2 Top Notebooks
+        -if !@org.notebooks
+          strong No notebooks found
         -else
-          ol
-            -# Sort (but too lazy to do it now)
-            -top_users = User.all.limit(5)
-            -top_users.each do |user|
-                li.org-top-user
-                  i.fa.fa-user aria-hidden="true"
-                  a href="#{user_path(user)}" #{user.name}
-                  -unless FALSE
-                    span.tooltips title="This notebook has been starred #{"2"} times"
-                      span.glyphicon.glyphicon-star-empty.action-icon.view-summary
-                      span.sr-only
-                        ' Stars
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively has been viewed #{"100"} unique times"
-                      span.glyphicon.glyphicon-eye-open.action-icon.view-summary
-                      span.sr-only
-                        ' Views
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively have been run #{"10"} unique times"
-                      span.glyphicon.glyphicon-play-circle.action-icon.view-summary
-                      span.sr-only
-                        ' Runs
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively have been downloaded #{"5"} unique times"
-                      span.glyphicon.glyphicon-download-alt.action-icon.view-summary
-                      span.sr-only
-                        ' Downloads
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
+          strong #{@org.notebooks} notebooks found
+      div
+        h2 Top Groups
+        -if !@org.groups
+          strong No groups found
+        -else
+          strong #{@org.groups} groups found
   ==render partial: "org_listings"
-  h2 Top Notebooks
-  -if @org.notebooks
-    strong No notebooks found
-  -else
-    strong Notebooks...
+-if @notebooks.empty?
+  div.content-container
+    h2.center.empty No Notebooks Found
+-else
+  div id="notebookView" style="display: none;"
+    ==render partial: "notebooks"

@@ -1,0 +1,68 @@
+div.org-stats-by-user
+  h2 Top Authors
+  -#top_users = User.where(org: JSON.parse(@all_suborgs.pluck(:name).to_s))
+  -top_users = SumsForOrg.where(entity_type: "User", type_id: JSON.parse(User.where(org: JSON.parse(@all_suborgs.pluck(:name).to_s)).ids.to_s)).order(:score).reverse_order
+  -if !top_users.exists?
+    -strong No orgs found
+  -else
+    ol
+      -top_users.first(5).each do |user|
+        -user_stats = user
+        li.org-top-user
+          i.fa.fa-user aria-hidden="true"
+          ==link_to_user(User.find(user.type_id))
+          -if !@less_noise
+            span.hidden aria-hidden="true" #{" | "}
+            span.tooltips title="User is original author or owns #{user_stats.notebooks} notebooks"
+              span.fa.fa-book.action-icon.view-summary
+              span.sr-only
+                ' Notebooks
+              span.hidden aria-hidden="true" #{"("}
+              span.badge.badge-notify #{user_stats.notebooks}
+              span.hidden aria-hidden="true" #{")"}
+            span.hidden aria-hidden="true" #{" | "}
+            -if user_stats.groups > 0
+              span.hidden aria-hidden="true" #{" | "}
+              span.tooltips title="User has ownership of #{user_stats.groups} groups"
+                span.fa.fa-users.action-icon.view-summary
+                span.sr-only
+                  ' Groups
+                span.hidden aria-hidden="true" #{"("}
+                span.badge.badge-notify #{user_stats.groups}
+                span.hidden aria-hidden="true" #{")"}
+          -if user_stats.notebook_stars > 0
+            span.tooltips title="This user's notebooks have collectively #{user_stats.notebook_stars} stars"
+              span.glyphicon.glyphicon-star-empty.action-icon.view-summary
+              span.sr-only
+                ' Stars
+              span.hidden aria-hidden="true" #{"("}
+              span.badge.badge-notify #{user_stats.notebook_stars}
+              span.hidden aria-hidden="true" #{")"}
+            span.hidden aria-hidden="true" #{" | "}
+          -if TRUE || user_stats.notebook_views > 0
+            span.tooltips title="This user's notebooks have collectively #{user_stats.notebook_views} unique views"
+              span.glyphicon.glyphicon-eye-open.action-icon.view-summary
+              span.sr-only
+                ' Views
+              span.hidden aria-hidden="true" #{"("}
+              span.badge.badge-notify #{user_stats.notebook_views}
+              span.hidden aria-hidden="true" #{")"}
+            span.hidden aria-hidden="true" #{" | "}
+          -if user_stats.notebook_runs > 0
+            span.tooltips title="This user's notebooks have collectively #{user_stats.notebook_runs} unique runs"
+              span.glyphicon.glyphicon-play-circle.action-icon.view-summary
+              span.sr-only
+                ' Runs
+              span.hidden aria-hidden="true" #{"("}
+              span.badge.badge-notify #{user_stats.notebook_runs}
+              span.hidden aria-hidden="true" #{")"}
+            span.hidden aria-hidden="true" #{" | "}
+          -if user_stats.notebook_downloads > 0
+            span.tooltips title="This user's notebooks have collectively #{user_stats.notebook_downloads} unique downloads"
+              span.glyphicon.glyphicon-download-alt.action-icon.view-summary
+              span.sr-only
+                ' Downloads
+              span.hidden aria-hidden="true" #{"("}
+              span.badge.badge-notify #{user_stats.notebook_downloads}
+              span.hidden aria-hidden="true" #{")"}
+            span.hidden aria-hidden="true" #{" | "}

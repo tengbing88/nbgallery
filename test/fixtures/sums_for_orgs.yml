@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  entity_type: MyString
+  type_id: 1
+  score: 1
+  users: 1
+  notebooks: 1
+  groups: 1
+  notebook_views: 1
+  notebook_runs: 1
+  notebook_stars: 1
+  notebook_shares: 1
+  notebook_downloads: 1
+
+two:
+  entity_type: MyString
+  type_id: 1
+  score: 1
+  users: 1
+  notebooks: 1
+  groups: 1
+  notebook_views: 1
+  notebook_runs: 1
+  notebook_stars: 1
+  notebook_shares: 1
+  notebook_downloads: 1

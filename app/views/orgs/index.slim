@@ -1,4 +1,3 @@
--less_noise = TRUE
 -Org.where.not(parent_id: nil).each do |org|
   -score = 0; users_count = 0; notebooks_count = 0; groups_count = 0; views = 0; runs = 0; stars = 0; share_count = 0; downloads = 0;
   -users = User.where(org: org.name)
@@ -30,48 +29,11 @@
   -org.notebook_views = views
   -org.notebook_runs = runs
   -org.notebook_stars = stars
-  -org.notebook_shares = share_count
   -org.notebook_downloads = downloads
+  -org.notebook_shares = share_count
   -org.save!
   -#calculate_org_sums()
-
-// get array of all ids of direct children of ALL
-// for each direct child of ALL, calculate sums
-// while org is at an endpoint (no org exists with parent_id equal to its id)
-// for each child of array, find all subchildren and sum the things, setting array equal to that new level of elements.
-//-parents = Org.where(parent_id: @org.id)
-
-
-
-
-
-
-// !!!!!For each org, traverse through their hierarchy and add totals.
-//-parents = Org.where(parent_id: @org.id)
-//-parents.each do |org|
-//  -has_children = TRUE
-//  -while has_children do
-//    -if Org.where(parent_id: org.id).exists?
-//      has_children = FALSE
-//    -else
-
-
--# Add values to parent element if not the All Orgs
--# Won't work this way because rows could be manually uploaded out of order or edited with parents at the bottom/old ends
--#parent_org = Org.find(org.parent_id)
--#while parent_org.parent_id != nil
--#parent_org.score += (org.notebook_runs * 10) + org.notebook_views
--#parent_org.users += org.users
--#parent_org.notebooks += org.notebooks
--#parent_org.groups += org.groups
--#parent_org.notebook_views += org.notebook_views
--#parent_org.notebook_runs += org.notebook_runs
--#parent_org.notebook_stars += org.notebook_stars
--#parent_org.notebook_shares += org.notebook_shares
--#parent_org.notebook_downloads += org.notebook_downloads
--#org = parent_org
--#parent_org = Org.find(parent_org.parent_id)
-
+  -#calculate_user_sums()
 
 -parented_orgs = Org.where.not(parent_id: nil)
 -@org.users = parented_orgs.sum(:users)
@@ -97,7 +59,7 @@ div.content-container.mobile-expanding
           h1
             span All Orgs
           ==render partial: "org_headline"
-div.content-container
+div.content-container id="landingPage"
   div
     div.org-stats.flex
       div.org-stats-by-org
@@ -106,12 +68,13 @@ div.content-container
           strong No orgs found
         -else
           ol
-            -top_orgs = Org.where.not(parent_id: nil).order(:score).reverse_order
+            -top_orgs = SumsForOrg.where(entity_type: "Org").order(:score).reverse_order
+            -#top_orgs = Org.where.not(parent_id: nil).order(:score).reverse_order
             -top_orgs.first(5).each do |org|
               -if org.notebook_views > 0
                 li
-                  a href="#{org_path(org)}" #{org.name}
-                  -if !less_noise
+                  a href="#{org_path(Org.find(org.type_id))}" #{Org.find(org.type_id).name}
+                  -if !@less_noise
                     span.hidden aria-hidden="true" #{" | "}
                     span.tooltips title="Contains #{org.notebooks} notebooks"
                       span.fa.fa-book.action-icon.view-summary
@@ -172,55 +135,11 @@ div.content-container
                       span.hidden aria-hidden="true" #{"("}
                       span.badge.badge-notify #{org.notebook_downloads}
                       span.hidden aria-hidden="true" #{")"}
-      div.org-stats-by-user
-        h2 Top Users
-        -if no_orgs
-          strong No orgs found
-        -else
-          ol
-            -# Sort (but too lazy to do it now)
-            -top_users = User.all.limit(5)
-            -top_users.each do |user|
-                li.org-top-user
-                  i.fa.fa-user aria-hidden="true"
-                  a href="#{user_path(user)}" #{user.name}
-                  -unless FALSE
-                    span.tooltips title="This notebook has been starred #{"2"} times"
-                      span.glyphicon.glyphicon-star-empty.action-icon.view-summary
-                      span.sr-only
-                        ' Stars
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively has been viewed #{"100"} unique times"
-                      span.glyphicon.glyphicon-eye-open.action-icon.view-summary
-                      span.sr-only
-                        ' Views
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively have been run #{"10"} unique times"
-                      span.glyphicon.glyphicon-play-circle.action-icon.view-summary
-                      span.sr-only
-                        ' Runs
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                  -unless FALSE
-                    span.tooltips title="This org's notebooks collectively have been downloaded #{"5"} unique times"
-                      span.glyphicon.glyphicon-download-alt.action-icon.view-summary
-                      span.sr-only
-                        ' Downloads
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify 10
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
+      ==render partial: "top_users"
   ==render partial: "org_listings"
-  -ids = test()
-  p
-    ==ids
+-if @notebooks.empty?
+  div.content-container
+    h2.center.empty No Notebooks Found
+-else
+  div id="notebookView" style="display: none;"
+    ==render partial: "notebooks"

@@ -4,7 +4,6 @@ $(document).ready(function() {
   var addRow = function(){
     var newRow = $("<tr>");
     var cols = "";
-
     cols += '<td><input type="text" class="form-control" name="username_' + counter + '"/></td>';
     cols += '<td><div class="form-group"><select class="form-control" required=true name="role_' + counter + '">'
     cols += '<option disabled selected value> Pick One </option>'
@@ -12,7 +11,6 @@ $(document).ready(function() {
     cols += '<option value="editor"> Editor </option>'
     cols += '<option value="owner"> Owner </option>'
     cols += '</select></div></td>';
-
     cols += '<td><input type="button" class="ibtnDel btn btn-md btn-danger "  value="Delete"></td>';
     newRow.append(cols);
     $("table.order-list").append(newRow);
@@ -20,18 +18,16 @@ $(document).ready(function() {
   }
 
   $("#addrow").on("click", addRow);
-
   $("#addrowedit").on("click", addRow);
-
   $("table.order-list").on("click", ".ibtnDel", function (event) {
       $(this).closest("tr").remove();
   });
 
-  $('#groupToggle').on('click',function(){
+  $('#viewToggle').on('click',function(){
       if($('#groupNotebooks').is(':visible')){
-        $('#groupToggle span.text').text('view notebooks');
+        $('#viewToggle span.text').text('view notebooks');
       } else {
-        $('#groupToggle span.text').text('view landing notebook');
+        $('#viewToggle span.text').text('view landing notebook');
       };
       $('#groupNotebooks').toggle();
       $('#groupLanding').toggle();
@@ -51,13 +47,12 @@ $(document).ready(function() {
 
   if (GetURLParameter('page')){
     if($('#groupNotebooks').is(':visible')){
-      $('#groupToggle').text(' [view notebooks]');
+      $('#viewToggle').text(' [view notebooks]');
     } else {
-      $('#groupToggle').text(' [view landing notebook]');
+      $('#viewToggle').text(' [view landing notebook]');
       $('#groupNotebooks').toggle();
       $('#groupLanding').toggle();
     };
-
   }
 
   $('#groupForm').on('ajax:success', function(){

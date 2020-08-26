@@ -2,21 +2,40 @@
 class OrgsController < ApplicationController
   before_action :verify_admin
   skip_before_filter :verify_authenticity_token
-  @children = Array.new {[]}
-  tester = "test"
-
+  @@less_noise = TRUE
 
   # GET /orgs
   def index
+    @less_noise = @@less_noise
+    # The org you are viewing (unsummed and summed)
     @org = Org.find_by(parent_id: nil)
-    @orgs = Org.where(parent_id: @org.id)
-    @all_sub_orgs = Org.where.not(parent_id: nil)
+    @summed_org = @org
+    # The direct sub-orgs of the org you are viewing (unsummed and summed)
+    @direct_suborgs = Org.where(parent_id: @org.id)
+    @direct_summed_suborgs = SumsForOrg.where(entity_type: "Org", type_id: JSON.parse((Org.where(parent_id: @org.id).pluck(:id)).to_s)).where.not(type_id: @org.id)
+    # All sub-orgs of the org you are viewing (unsummed and summed)
+    @all_suborgs = Org.where(id: JSON.parse((Org.where.not(parent_id: nil).pluck(:id)).to_s)).where.not(id: @org.id)
+    @all_summed_suborgs = SumsForOrg.where(entity_type: "Org", type_id: JSON.parse((Org.where.not(parent_id: nil).pluck(:id)).to_s)).where.not(type_id: @org.id)
+    get_notebooks()
   end
 
   # GET /orgs/:name
   def show
+    @less_noise = @@less_noise
+    # The org you are viewing (unsummed and summed)
     @org = Org.find_by(id: params[:id])
-    @orgs = Org.where(parent_id: @org.id)
+    @summed_org = SumsForOrg.find_by(type_id: params[:id])
+    # Helper for calculating sub-orgs
+    @children = Array.new
+    grab_children([params[:id].to_i])
+    ids = @children.flatten.reject(&:blank?).uniq
+    # The direct sub-orgs of the org you are viewing (unsummed and summed)
+    @direct_suborgs = Org.where(parent_id: @org.id)
+    @direct_summed_suborgs = SumsForOrg.where(entity_type: "Org", type_id: JSON.parse((Org.where(parent_id: @org.id).pluck(:id)).to_s)).where.not(type_id: @org.id)
+    # All sub-orgs of the org you are viewing (unsummed and summed)
+    @all_suborgs = Org.where(id: JSON.parse((Org.where(id: JSON.parse(ids.to_s)).pluck(:id)).to_s))
+    @all_summed_suborgs = SumsForOrg.where(entity_type: "Org", type_id: JSON.parse((Org.where(id: JSON.parse(ids.to_s)).pluck(:id)).to_s)).where.not(type_id: @org.id)
+    get_notebooks()
   end
 
   # PATCH /admin/org_chart/add
@@ -260,43 +279,118 @@ class OrgsController < ApplicationController
   def calculate_org_sums
     Org.where.not(parent_id: nil).each do |org|
       org_id_array = [org.id]
-      ids = grab_children(org_id_array)
-      uniq_ids = ids.flatten.reject(&:blank?).uniq
-      all_org_children = Org.find(id: JSON.parse(uniq_ids))
+      @children = []
+      grab_children(org_id_array)
+      ids = @children.flatten.reject(&:blank?).uniq
+      ids.each do |id|
+        SumsForOrg.find_or_create_by(entity_type: "Org", type_id: id)
+      end
+      all_org_children = Org.where(id: JSON.parse(ids.to_s))
       # With the children, caclulate for each
-      org.users = all_org_children.sum(:users)
-      org.notebooks = all_org_children.sum(:notebooks)
-      org.groups = all_org_children.sum(:groups)
-      org.notebook_views = all_org_children.sum(:notebook_views)
-      org.notebook_runs = all_org_children.sum(:notebook_runs)
-      org.notebook_stars = all_org_children.sum(:notebook_stars)
-      org.notebook_shares = all_org_children.sum(:notebook_shares)
-      org.notebook_downloads = all_org_children.sum(:notebook_downloads)
-      org.save!
+      summed_org = SumsForOrg.where(entity_type: "Org", type_id: org.id).first
+      summed_org.score = all_org_children.sum(:notebook_runs) * 10 + all_org_children.sum(:notebook_views)
+      summed_org.users = all_org_children.sum(:users)
+      summed_org.notebooks = all_org_children.sum(:notebooks)
+      summed_org.groups = all_org_children.sum(:groups)
+      summed_org.notebook_views = all_org_children.sum(:notebook_views)
+      summed_org.notebook_runs = all_org_children.sum(:notebook_runs)
+      summed_org.notebook_stars = all_org_children.sum(:notebook_stars)
+      summed_org.notebook_shares = all_org_children.sum(:notebook_shares)
+      summed_org.notebook_downloads = all_org_children.sum(:notebook_downloads)
+      summed_org.save!
     end
   end
-
-  def test
-    #return grab_children([8])
-    return tester
-  end
+  helper_method :calculate_org_sums
 
   def grab_children(org_id_array)
     org_id_array.each do |child_id|
       if !Org.where(parent_id: child_id).exists?
-        #@children.push(child_id)
-        org_id_array.pop(child_id)
-        return nil
+        @children.push(child_id)
+        org_id_array.delete(child_id)
+        return @children.flatten.to_s
       else
-        #@children.push(child_id)
-        org_id_array.pop(child_id)
+        @children.push(child_id)
+        org_id_array.delete(child_id)
         org_id_array.push(Org.where(parent_id: child_id).pluck(:id))
         grab_children(org_id_array)
       end
     end
   end
 
-  helper_method :test
-  helper_method :calculate_org_sums
+  def calculate_user_sums
+    User.where(org: JSON.parse(@all_suborgs.pluck(:name).to_s)).each do |user|
+      user_stats = SumsForOrg.find_or_create_by(entity_type: "User", type_id: user.id)
+      user_stats.groups = GroupMembership.where(user_id: user.id, owner: 1).count
+      notebooks_count = 0; views = 0; runs = 0; stars = 0; share_count = 0; downloads = 0;
+      notebooks = Notebook.where(owner_type: "User", owner_id: user.id)
+      notebooks_count += notebooks.count
+      notebooks.each do |notebook|
+        views += NotebookSummary.find(notebook.id).unique_views
+        runs += NotebookSummary.find(notebook.id).unique_runs
+        stars += NotebookSummary.find(notebook.id).stars
+        downloads += NotebookSummary.find(notebook.id).unique_downloads
+        #share_count += Share.where(notebook_id: notebook.id).count
+      end
+      notebooks = Notebook.where(creator_id: user.id).where.not(owner_type: "User", owner_id: user.id)
+      notebooks_count += notebooks.count
+      notebooks.each do |notebook|
+        views += NotebookSummary.find(notebook.id).unique_views
+        runs += NotebookSummary.find(notebook.id).unique_runs
+        stars += NotebookSummary.find(notebook.id).stars
+        downloads += NotebookSummary.find(notebook.id).unique_downloads
+        #share_count += Share.where(notebook_id: notebook.id).count
+      end
+      user_stats.notebooks = notebooks_count
+      user_stats.score = runs * 10 + views
+      user_stats.notebook_views = views
+      user_stats.notebook_runs = runs
+      user_stats.notebook_stars = stars
+      user_stats.notebook_downloads = downloads
+      #user_stats.notebook_shares = share_count
+      user_stats.save!
+    end
+  end
+  helper_method :calculate_user_sums
+
+  def get_notebooks
+    if TRUE
+      notebook_ids = Array.new
+      @all_suborgs.each do |org|
+        User.where(org: org.name).each do |user|
+          notebook_ids.push(Notebook.where(owner_type: "User", owner_id: user.id).pluck(:id))
+          GroupMembership.where(user_id: user.id, owner: 1).each do |group|
+            notebook_ids.push(Notebook.where(owner_type: "Group", owner_id: group.id).pluck(:id))
+          end
+        end
+      end
+      notebook_ids = notebook_ids.flatten.reject(&:blank?).uniq
+      @notebooks = query_notebooks.where(id: JSON.parse((notebook_ids).to_s))
+      respond_to do |format|
+        format.html
+        format.json {render 'notebooks/index'}
+        format.rss {render 'notebooks/index'}
+      end
+    else
+      @notebooks = query_notebooks.where(public: TRUE)
+      respond_to do |format|
+        format.html
+        format.json {render 'notebooks/index'}
+        format.rss {render 'notebooks/index'}
+      end
+    end
+  end
+
+  #groups = GroupMembership.where(user_id: user.id, owner: 1)
+  #groups.each do |group|
+  #  notebooks = Notebook.where(owner_type: "Group", owner_id: group.group_id)
+  #  notebooks_count += notebooks.count
+  #  notebooks.each do |notebook|
+  #    views += NotebookSummary.find(notebook.id).unique_views
+  #    runs += NotebookSummary.find(notebook.id).unique_runs
+  #    stars += NotebookSummary.find(notebook.id).stars
+  #    downloads += NotebookSummary.find(notebook.id).unique_downloads
+  #    #share_count += Share.where(notebook_id: notebook.id).count
+  #  end
+  #end
 
 end

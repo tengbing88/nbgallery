@@ -1498,7 +1498,7 @@ span.deprecated-tag {
 }
 #tagsDisplay,
 .tag-edit-mode,
-#orgTable,
+#orgListing,
 .org-stats,
 p.org-stats-headline {
     & > a {
@@ -2129,9 +2129,7 @@ body.page-groups #main .dropdownGroup {
     position: relative;
     top: -3.1em;
 }
-body.page-groups-id #groupToggle,
-body.directory-orgs #viewToggle,
-body.page-orgs #viewToggle {
+#viewToggle {
     color: #ff782a;
     font-size: 21px;
     font-weight: $bold-weight;
@@ -3163,7 +3161,8 @@ body.directory-orgs h2,
 body.page-orgs h2 {
     margin-top: 1em;
 }
-#orgTable {
+#orgListing {
+    margin-top: 1em;
     .title {
         font-size: 150%;
         margin-right: .5em;
@@ -3224,9 +3223,6 @@ ol.org-hierarchy {
     span.fa {
         margin-right: .5em;
     }
-}
-#orgTable {
-    margin-top: 1em;
 }
 .indent-1 {margin-left: 1em}
 .indent-2 {margin-left: 2em}

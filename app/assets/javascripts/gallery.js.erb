@@ -442,20 +442,6 @@ $(document).ready(function(){
   }
 
   /* ===================================== */
-  /* ======== Group Functionality ======== */
-  /* ===================================== */
-  $('#groupToggle').keypress(function(e){
-    var keycode = (e.keyCode ? event.keyCode : event.which);
-    if(keycode == '13' || keycode == '32'){
-      e.preventDefault();
-      $('#groupToggle').click();
-    }
-  });
-  $("#groupToggle").on("click", function(){
-    $('.sparkline').sparkline();
-  });
-
-  /* ===================================== */
   /* ====== Recommendation Toggling ====== */
   /* ===================================== */
   // Notebook "recommendations" similar notebooks and user also viewed stuff
@@ -709,6 +695,36 @@ $(document).ready(function(){
       $('#stageUpload').modal('show');
     };
   };
+
+  /* =============================================== */
+  /* === Group & Org View-Toggling Functionality === */
+  /* =============================================== */
+  /* Toggle Notebook View on Org Pages */
+  $('#viewToggle').on('click',function(){
+      if($('#notebookView').is(':visible')){
+        $('#viewToggle span.text').text('view notebooks');
+      } else {
+        $('#viewToggle span.text').text('view landing notebook');
+      };
+      $('#notebookView').toggle();
+      $('#landingPage').toggle();
+    return false;
+  });
+  /* Both Group and Org Pages */
+  $('#viewToggle').keypress(function(e){
+    var keycode = (e.keyCode ? event.keyCode : event.which);
+    if(keycode == '13' || keycode == '32'){
+      e.preventDefault();
+      $('#viewToggle').click();
+    }
+  });
+  var viewToggled = false;
+  $("#viewToggle").on("click", function(){
+    if(!viewToggled) {
+      $('.sparkline').sparkline();
+      viewToggled = true;
+    }
+  });
 
   /* ===================================== */
   /* =============== Orgs ================ */
