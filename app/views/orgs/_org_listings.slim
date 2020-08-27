@@ -1,12 +1,12 @@
 div
   -if !@direct_suborgs.exists?
-    h2 Sub Orgs (0)
+    h2 Sub-Orgs (0)
     ul.list-group id="orgListing"
       li.list-group-item
         strong.center No sub-orgs found
   -else
     h2
-      | Sub Orgs (
+      | Sub-Orgs (
       ==@direct_suborgs.count
       | )
     ul.list-group id="orgListing"

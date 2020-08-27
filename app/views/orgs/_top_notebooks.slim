@@ -1,0 +1,6 @@
+div
+  h2 Top Notebooks
+  -if !@org.notebooks
+    strong No notebooks found
+  -else
+    strong #{@org.notebooks} notebooks found

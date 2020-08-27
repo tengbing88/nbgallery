@@ -16,90 +16,10 @@ div.content-container.mobile-expanding
 div.content-container id="landingPage"
   div
     div.org-stats.flex
-      div.org-stats-by-org
-        h2 Top Orgs
-        -if no_orgs
-          strong No sub-orgs found
-        -else
-          ol
-            -top_orgs.first(5).each do |org|
-              -if org.notebook_views > 0
-                li
-                  a href="#{org_path(Org.find(org.type_id))}" #{Org.find(org.type_id).name}
-                  -if !@less_noise
-                    span.hidden aria-hidden="true" #{" | "}
-                    span.tooltips title="Contains #{org.notebooks} notebooks"
-                      span.fa.fa-book.action-icon.view-summary
-                      span.sr-only
-                        ' Notebooks
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify #{org.notebooks}
-                      span.hidden aria-hidden="true" #{")"}
-                    span.hidden aria-hidden="true" #{" | "}
-                    span.tooltips title="Contains #{org.users} users"
-                      span.fa.fa-user.action-icon.view-summary
-                      span.sr-only
-                        ' Users
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify #{org.users}
-                      span.hidden aria-hidden="true" #{")"}
-                    -if org.groups > 0
-                      span.hidden aria-hidden="true" #{" | "}
-                      span.tooltips title="Contains #{org.groups} group where org' users have full or split ownership"
-                        span.fa.fa-users.action-icon.view-summary
-                        span.sr-only
-                          ' Groups
-                        span.hidden aria-hidden="true" #{"("}
-                        span.badge.badge-notify #{org.groups}
-                        span.hidden aria-hidden="true" #{")"}
-                  -if org.notebook_stars > 0
-                    span.hidden aria-hidden="true" #{" | "}
-                    span.tooltips title="This org's notebooks collectively have been starred #{org.notebook_stars} times"
-                      span.glyphicon.glyphicon-star-empty.action-icon.view-summary
-                      span.sr-only
-                        ' Stars
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify #{org.notebook_stars}
-                      span.hidden aria-hidden="true" #{")"}
-                  span.hidden aria-hidden="true" #{" | "}
-                  span.tooltips title="This org's notebooks collectively has been viewed #{org.notebook_views} unique times"
-                    span.glyphicon.glyphicon-eye-open.action-icon.view-summary
-                    span.sr-only
-                      ' Views
-                    span.hidden aria-hidden="true" #{"("}
-                    span.badge.badge-notify #{org.notebook_views}
-                    span.hidden aria-hidden="true" #{")"}
-                  -if org.notebook_runs > 0
-                    span.hidden aria-hidden="true" #{" | "}
-                    span.tooltips title="This org's notebooks collectively have been run #{org.notebook_runs} unique times"
-                      span.glyphicon.glyphicon-play-circle.action-icon.view-summary
-                      span.sr-only
-                        ' Runs
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify #{org.notebook_runs}
-                      span.hidden aria-hidden="true" #{")"}
-                  -if org.notebook_downloads > 0
-                    span.hidden aria-hidden="true" #{" | "}
-                    span.tooltips title="This org's notebooks collectively have been downloaded by #{org.notebook_downloads} unique users"
-                      span.glyphicon.glyphicon-download-alt.action-icon.view-summary
-                      span.sr-only
-                        ' Downloads
-                      span.hidden aria-hidden="true" #{"("}
-                      span.badge.badge-notify #{org.notebook_downloads}
-                      span.hidden aria-hidden="true" #{")"}
+      ==render partial: "top_orgs"
       ==render partial: "top_users"
-      div
-        h2 Top Notebooks
-        -if !@org.notebooks
-          strong No notebooks found
-        -else
-          strong #{@org.notebooks} notebooks found
-      div
-        h2 Top Groups
-        -if !@org.groups
-          strong No groups found
-        -else
-          strong #{@org.groups} groups found
+      ==render partial: "top_notebooks"
+      ==render partial: "top_groups"
   ==render partial: "org_listings"
 -if @notebooks.empty?
   div.content-container
