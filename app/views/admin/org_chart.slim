@@ -2,7 +2,7 @@ div.content-container
   div.orgs-special-alert-container
   h1.center Org Chart
   br
-  -if Org.count != 0
+  -if Org.count == 0
     div.center.button-container
       form method="post" action="/admin/org_chart/generate_orgs_from_profiles" id="generateFromUsers"
         button.btn.btn-primary type="submit" Generate from User Profiles
