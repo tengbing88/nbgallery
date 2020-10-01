@@ -17,6 +17,7 @@ class UsersController < ApplicationController
         @users = @users.filter_by_org(params[:org]) if params[:org].present?
         @users = @users.filter_by_approved(params[:approved]) if params[:approved].present?
         @users = @users.filter_by_admin(params[:admin]) if params[:admin].present?
+        @users = @users.filter_by_email(params[:email]) if params[:email].present?
       end
       format.json do
         verify_admin if params[:prefix].blank? || params[:prefix].size < 3

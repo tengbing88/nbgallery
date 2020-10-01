@@ -22,6 +22,10 @@ div.content-container
             br
             input.form-control type="search" placeholder="Org" name="org" aria-label="Filter users by org" value="#{params[:org] || ''}"
           th
+            | Email
+            br
+            input.form-control type="search" placeholder="Email" name="email" aria-label="Filter users by email" value="#{params[:email] || ''}"
+          th
             | Admin
             select.form-control name="admin" id="filterAdmin" aria-label="Filter users by whether or not they're an admin"
               option value="" Both
@@ -45,6 +49,7 @@ div.content-container
             td ==user.first_name
             td ==user.last_name
             td ==user.org
+            td ==user.email
             td ==user.admin
             td ==user.approved || false
             td
