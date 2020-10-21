@@ -116,18 +116,26 @@ class ChangeRequestsController < ApplicationController
   # PATCH /change_requests/:reqid/accept
   def accept
     # Content must be validated again in the context of the owner
-    jn = @change_request.proposed_notebook
-    raise Noteboook::BadUpload.new('bad content', jn.errors) if jn.invalid?(@notebook, @user, params)
+    proposed_notebook = @change_request.proposed_notebook
+    if proposed_notebook.invalid?(@notebook, @user, params)
+      raise Noteboook::BadUpload.new("Proposed notebook has bad content", proposed_notebook.errors)
+    #elsif @notebook.title.include? ":" || @notebook.title.include? "/" || @notebook.title.include? "\\"
+    #  raise Notebook::BadUpload.new("Invalid parameters in existing notebook", @notebook.errors)
+    #elsif proposed_notebook.title.include? ":" || proposed_notebook.title.include? "/" || proposed_notebook.title.include? "\\"
+    #  raise Notebook::BadUpload.new("Invalid parameters in proposed notebook", proposed_notebook.errors)
+    end
 
     # Update notebook object
-    @notebook.lang, @notebook.lang_version = jn.language
+    @notebook.lang, @notebook.lang_version = proposed_notebook.language
     @notebook.updater = @change_request.requestor
     Notebook.extension_attributes.each do |attr|
       next unless @change_request.respond_to?(attr)
       value = @change_request.send(attr)
       @notebook.send("#{attr}=".to_sym, value) if value.present?
     end
-    raise Notebook::BadUpload.new('invalid parameters', @notebook.errors) if @notebook.invalid?
+    if @notebook.invalid?
+      raise Notebook::BadUpload.new("Invalid parameters", @notebook.errors)
+    end
 
     # Save the content
     old_content = @notebook.content
@@ -139,14 +147,14 @@ class ChangeRequestsController < ApplicationController
     # Save the notebook - note the requestor gets "edit" credit
     @notebook.content = new_content # saves to cache
     if @notebook.save
-      @change_request.status = 'accepted'
+      @change_request.status = "accepted"
       @change_request.owner_comment = params[:comment]
       @change_request.save
       method = (new_content == old_content ? :notebook_metadata : :notebook_update)
       real_commit_id = Revision.send(method, @notebook, @change_request.requestor, commit_message)
-      clickstream('agreed to terms')
-      clickstream('accepted change request', tracking: @change_request.reqid)
-      clickstream('edited notebook', user: @change_request.requestor, tracking: real_commit_id)
+      clickstream("agreed to terms")
+      clickstream("accepted change request", tracking: @change_request.reqid)
+      clickstream("edited notebook", user: @change_request.requestor, tracking: real_commit_id)
       ChangeRequestMailer.accept(@change_request, @user, request.base_url).deliver_later
       flash[:success] = "Change request has been accepted successfully. Return to <a href='#{change_requests_path}'>Change Requests</a>?"
       redirect_to(:back)
@@ -159,10 +167,10 @@ class ChangeRequestsController < ApplicationController
 
   # PATCH /change_requests/:reqid/decline
   def decline
-    @change_request.status = 'declined'
+    @change_request.status = "declined"
     @change_request.owner_comment = params[:comment]
     @change_request.save!
-    clickstream('declined change request', tracking: @change_request.reqid)
+    clickstream("declined change request", tracking: @change_request.reqid)
     ChangeRequestMailer.decline(@change_request, @user, request.base_url).deliver_later
     flash[:success] = "Change request has been declined successfully. Return to <a href='#{change_requests_path}'>Change Requests</a>?"
     redirect_to(:back)
@@ -170,9 +178,9 @@ class ChangeRequestsController < ApplicationController
 
   # PATCH /change_requests/:reqid/cancel
   def cancel
-    @change_request.status = 'canceled'
+    @change_request.status = "canceled"
     @change_request.save!
-    clickstream('canceled change request', tracking: @change_request.reqid)
+    clickstream("canceled change request", tracking: @change_request.reqid)
     ChangeRequestMailer.cancel(@change_request, request.base_url).deliver_later
     flash[:success] = "Change request has been cancelled successfully. Return to <a href='#{change_requests_path}'>Change Requests</a>?"
     redirect_to(:back)
