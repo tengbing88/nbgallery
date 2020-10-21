@@ -36,7 +36,11 @@ div.content-container
           th colspan="4"
             | Actions
             br
-            button.btn.btn-primary id="usersTableFilterSubmit" form="usersTableFilter" Filter Users
+            button.btn.btn-primary id="usersTableFilterSubmit" type="submit" form="usersTableFilter" Filter Users
+            a href="#{request.path}"
+              button.btn.btn-danger id="usersTableFilterClear" tab-index="-1"
+                | Clear
+                span.sr-only #{" Filters"}
       tbody
         -users = @users.order(:user_name).paginate(page: @page, per_page: 100)
         -users.each do |user|
